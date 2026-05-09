@@ -1,0 +1,108 @@
+body{
+    font-family: Arial;
+    background:#101522;
+    color:white;
+    margin:0;
+}
+
+.topo{
+    background:#182235;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+}
+
+a{
+    color:white;
+    text-decoration:none;
+}
+
+.filtros{
+    padding:20px;
+    display:flex;
+    gap:10px;
+}
+
+input, select, button{
+    padding:12px;
+    border:none;
+    border-radius:8px;
+}
+
+button{
+    background:#3d7eff;
+    color:white;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    padding:20px;
+}
+
+.card{
+    background:#182235;
+    padding:20px;
+    border-radius:15px;
+}
+
+.kpis{
+    display:flex;
+    gap:20px;
+    padding:20px;
+}
+
+.kpi{
+    background:#182235;
+    padding:20px;
+    border-radius:15px;
+    width:250px;
+}
+
+.grafico{
+    background:white;
+    margin:20px;
+    padding:20px;
+    border-radius:20px;
+}
+
+.lista{
+    padding:20px;
+}
+
+.produto{
+    background:#182235;
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:1;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+}
+
+.modal-content{
+    background:white;
+    color:black;
+    margin:5% auto;
+    padding:20px;
+    width:70%;
+    border-radius:20px;
+    max-height:80vh;
+    overflow:auto;
+}
+
+.fechar{
+    float:right;
+    cursor:pointer;
+    font-size:30px;
+}

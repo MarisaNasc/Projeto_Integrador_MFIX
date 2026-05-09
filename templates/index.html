@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>DW MFix</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="topo">
+
+    <h1>DATA WAREHOUSE MFix</h1>
+
+    <a href="/dashboard">
+        Dashboard BI
+    </a>
+
+</div>
+
+<form method="GET" class="filtros">
+
+    <input type="text"
+           name="produto"
+           placeholder="Pesquisar produto">
+
+    <select name="tipo">
+        <option value="">Movimentação</option>
+        <option value="ENTRADA">Entrada</option>
+        <option value="SAÍDA">Saída</option>
+        <option value="AJUSTE">Ajuste</option>
+    </select>
+
+    <input type="text"
+           name="fornecedor"
+           placeholder="Fornecedor">
+
+    <button type="submit">
+        Pesquisar
+    </button>
+
+</form>
+
+
+<div class="cards">
+
+{% for d in dados %}
+
+<div class="card">
+
+    <h2>{{ d.descricao_prod }}</h2>
+
+    <p><b>Fornecedor:</b> {{ d.nome_forn }}</p>
+
+    <p><b>Tipo:</b> {{ d.descricao_mov }}</p>
+
+    <p><b>Quantidade:</b> {{ d.quantidade }}</p>
+
+    <p><b>Data:</b> {{ d.data }}</p>
+
+    <p><b>Lote:</b> {{ d.numero_lote }}</p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>

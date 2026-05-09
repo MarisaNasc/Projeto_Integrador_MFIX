@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Dashboard BI</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="topo">
+
+    <h1>DASHBOARD BI</h1>
+
+    <a href="/">
+        Interface DW
+    </a>
+
+</div>
+
+<div class="kpis">
+
+    <div class="kpi">
+        <h2>{{ kpis[0].total_mov }}</h2>
+        <p>Movimentações</p>
+    </div>
+
+    <div class="kpi">
+        <h2>R$ {{ kpis[0].receita }}</h2>
+        <p>Receita</p>
+    </div>
+
+    <div class="kpi">
+        <h2>{{ kpis[0].produtos }}</h2>
+        <p>Produtos</p>
+    </div>
+
+</div>
+
+
+<div class="grafico">
+
+<canvas id="graficoProdutos"></canvas>
+
+</div>
+
+
+<div class="lista">
+
+<h2>TOP 5 PRODUTOS</h2>
+
+{% for p in top_produtos %}
+
+<div class="produto"
+     onclick="abrirModal('{{p.descricao_prod}}')">
+
+    {{ p.descricao_prod }}
+    - {{ p.total }}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+<div id="modal" class="modal">
+
+<div class="modal-content">
+
+<span class="fechar"
+      onclick="fecharModal()">
+
+X
+
+</span>
+
+<div id="conteudoModal"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const produtos = {{ top_produtos|tojson }};
+
+new Chart(
+document.getElementById('graficoProdutos'),
+{
+    type: 'bar',
+
+    data: {
+
+        labels: produtos.map(p => p.descricao_prod),
+
+        datasets: [{
+            label: 'Quantidade',
+            data: produtos.map(p => p.total)
+        }]
+    }
+}
+);
+
+
+async function abrirModal(nome){
+
+    const resposta =
+    await fetch(`/produto/${nome}`);
+
+    const dados =
+    await resposta.json();
+
+    let html = "";
+
+    dados.forEach(d => {
+
+        html += `
+
+        <div class="detalhe">
+
+            <h2>${d.descricao_prod}</h2>
+
+            <p><b>Fornecedor:</b> ${d.nome_forn}</p>
+
+            <p><b>Lote:</b> ${d.numero_lote}</p>
+
+            <p><b>Validade:</b> ${d.data_validade_lote}</p>
+
+            <p><b>Mov:</b> ${d.descricao_mov}</p>
+
+            <p><b>Quantidade:</b> ${d.quantidade}</p>
+
+            <p><b>Receita:</b> ${d.valor_total}</p>
+
+            <p><b>Transportadora:</b> ${d.nome_transp}</p>
+
+            <p><b>Data:</b> ${d.data}</p>
+
+        </div>
+
+        <hr>
+        `
+    });
+
+    document
+    .getElementById("conteudoModal")
+    .innerHTML = html;
+
+    document
+    .getElementById("modal")
+    .style.display = "block";
+}
+
+
+function fecharModal(){
+
+    document
+    .getElementById("modal")
+    .style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
