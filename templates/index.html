@@ -1,66 +1,260 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="pt-br">
+
 <head>
 
-    <title>DW MFix</title>
+    <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="/static/style.css">
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+
+        DATA WAREHOUSE MFIX
+
+    </title>
+
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+    >
 
 </head>
 
 <body>
 
-<div class="topo">
+<!-- ================================================= -->
+<!-- TOPO -->
+<!-- ================================================= -->
 
-    <h1>DATA WAREHOUSE MFix</h1>
+<div class="topbar">
+
+    <div>
+
+        <h1>
+
+            DATA WAREHOUSE MFIX
+
+        </h1>
+
+    </div>
 
     <a href="/dashboard">
-        Dashboard BI
+
+        Dashboard Executivo
+
     </a>
 
 </div>
 
-<form method="GET" class="filtros">
+<!-- ================================================= -->
+<!-- FILTROS -->
+<!-- ================================================= -->
 
-    <input type="text"
-           name="produto"
-           placeholder="Pesquisar produto">
+<form
+method="POST"
+class="filtros"
+>
 
-    <select name="tipo">
-        <option value="">Movimentação</option>
-        <option value="ENTRADA">Entrada</option>
-        <option value="SAÍDA">Saída</option>
-        <option value="AJUSTE">Ajuste</option>
+    <!-- ============================================= -->
+    <!-- PRODUTO -->
+    <!-- ============================================= -->
+
+    <div class="autocomplete-box">
+
+        <input
+        type="text"
+        id="produtoInput"
+        name="produto"
+        placeholder="Pesquisar produto"
+        autocomplete="off"
+        >
+
+        <div
+        id="autocomplete-list"
+        class="autocomplete-list"
+        ></div>
+
+    </div>
+
+    <!-- ============================================= -->
+    <!-- FORNECEDOR -->
+    <!-- ============================================= -->
+
+    <input
+    type="text"
+    name="fornecedor"
+    placeholder="Fornecedor"
+    >
+
+    <!-- ============================================= -->
+    <!-- MOVIMENTAÇÃO -->
+    <!-- ============================================= -->
+
+    <select name="movimentacao">
+
+        <option value="">
+            Movimentação
+        </option>
+
+        <option value="1">
+            ENTRADA
+        </option>
+
+        <option value="2">
+            SAÍDA
+        </option>
+
+        <option value="3">
+            AJUSTE
+        </option>
+
     </select>
 
-    <input type="text"
-           name="fornecedor"
-           placeholder="Fornecedor">
+    <!-- ============================================= -->
+    <!-- DATA INICIAL -->
+    <!-- ============================================= -->
+
+    <input
+    type="date"
+    name="data_inicial"
+    >
+
+    <!-- ============================================= -->
+    <!-- DATA FINAL -->
+    <!-- ============================================= -->
+
+    <input
+    type="date"
+    name="data_final"
+    >
+
+    <!-- ============================================= -->
+    <!-- BOTÃO -->
+    <!-- ============================================= -->
 
     <button type="submit">
+
         Pesquisar
+
     </button>
 
 </form>
 
+<!-- ================================================= -->
+<!-- GRID DE CARDS -->
+<!-- ================================================= -->
 
-<div class="cards">
+<div class="grid-cards">
 
-{% for d in dados %}
+{% for item in dados %}
 
 <div class="card">
 
-    <h2>{{ d.descricao_prod }}</h2>
+    <!-- ========================================= -->
+    <!-- TITULO -->
+    <!-- ========================================= -->
 
-    <p><b>Fornecedor:</b> {{ d.nome_forn }}</p>
+    <h2>
 
-    <p><b>Tipo:</b> {{ d.descricao_mov }}</p>
+        {{ item.descricao_prod }}
 
-    <p><b>Quantidade:</b> {{ d.quantidade }}</p>
+    </h2>
 
-    <p><b>Data:</b> {{ d.data }}</p>
+    <!-- ========================================= -->
+    <!-- INFORMAÇÕES -->
+    <!-- ========================================= -->
 
-    <p><b>Lote:</b> {{ d.numero_lote }}</p>
+    <p>
+
+        <strong>Fornecedor:</strong>
+
+        {{ item.nome_forn }}
+
+    </p>
+
+    <p>
+
+        <strong>Movimentação:</strong>
+
+        {{ item.descricao_mov }}
+
+    </p>
+
+    <p>
+
+        <strong>Quantidade:</strong>
+
+        {{ item.quantidade }}
+
+    </p>
+
+    <p>
+
+        <strong>Valor Total:</strong>
+
+        R$ {{ item.valor_total }}
+
+    </p>
+
+    <p>
+
+        <strong>Categoria:</strong>
+
+        {{ item.categoria_prod }}
+
+    </p>
+
+    <p>
+
+        <strong>Procedência:</strong>
+
+        {{ item.procedencia_prod }}
+
+    </p>
+
+    <p>
+
+        <strong>Transportadora:</strong>
+
+        {{ item.nome_transp }}
+
+    </p>
+
+    <p>
+
+        <strong>Lote:</strong>
+
+        {{ item.numero_lote }}
+
+    </p>
+
+    <p>
+
+        <strong>Validade:</strong>
+
+        {{ item.data_validade_lote }}
+
+    </p>
+
+    <p>
+
+        <strong>Data:</strong>
+
+        {{ item.data }}
+
+    </p>
+
+    <p>
+
+        <strong>Maior venda:</strong>
+
+        {{ item.melhor_venda }}
+
+    </p>
 
 </div>
 
@@ -68,5 +262,143 @@
 
 </div>
 
+<!-- ================================================= -->
+<!-- AUTOCOMPLETE -->
+<!-- ================================================= -->
+
+<script>
+
+const produtoInput =
+document.getElementById(
+    "produtoInput"
+)
+
+const listaAutocomplete =
+document.getElementById(
+    "autocomplete-list"
+)
+
+const formPesquisa =
+document.querySelector(
+    ".filtros"
+)
+
+async function buscarProdutos(){
+
+    const termo =
+    produtoInput.value.trim()
+
+    // SEM TEXTO
+    if(termo.length <= 0){
+
+        listaAutocomplete.innerHTML = ""
+
+        listaAutocomplete.style.display = "none"
+
+        return
+    }
+
+    try{
+
+        // BUSCA FLASK
+        const response =
+        await fetch(
+            `/autocomplete_produto?term=${encodeURIComponent(termo)}`
+        )
+
+        const produtos =
+        await response.json()
+
+        // LIMPA
+        listaAutocomplete.innerHTML = ""
+
+        // SEM RESULTADOS
+        if(produtos.length === 0){
+
+            listaAutocomplete.style.display = "none"
+
+            return
+        }
+
+        // MOSTRA
+        listaAutocomplete.style.display = "block"
+
+        // LOOP
+        produtos.forEach(produto => {
+
+            // ITEM
+            const item =
+            document.createElement("div")
+
+            item.classList.add(
+                "autocomplete-item"
+            )
+
+            item.innerText =
+            produto.descricao_prod
+
+            // CLICK
+            item.addEventListener(
+                "click",
+
+                () => {
+
+                    // PREENCHE
+                    produtoInput.value =
+                    produto.descricao_prod
+
+                    // FECHA
+                    listaAutocomplete.innerHTML = ""
+
+                    listaAutocomplete.style.display = "none"
+
+                    // ENVIA FORM
+                    formPesquisa.submit()
+                }
+            )
+
+            // ADD
+            listaAutocomplete.appendChild(item)
+
+        })
+
+    }catch(erro){
+
+        console.log(
+            erro
+        )
+    }
+}
+
+// DIGITAÇÃO
+produtoInput.addEventListener(
+    "keyup",
+    buscarProdutos
+)
+
+// FECHAR LISTA
+document.addEventListener(
+    "click",
+
+    function(e){
+
+        if(
+
+            !produtoInput.contains(e.target)
+
+            &&
+
+            !listaAutocomplete.contains(e.target)
+
+        ){
+
+            listaAutocomplete.style.display = "none"
+        }
+    }
+)
+
+</script>
+
 </body>
+
 </html>

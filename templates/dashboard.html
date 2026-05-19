@@ -1,85 +1,171 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="pt-br">
+
 <head>
 
-    <title>Dashboard BI</title>
+<meta charset="UTF-8">
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>
 
-    <link rel="stylesheet" href="/static/style.css">
+    Dashboard Executivo
+
+</title>
+
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
 <body>
 
-<div class="topo">
+<div class="dashboard-page">
 
-    <h1>DASHBOARD BI</h1>
+<div class="dashboard-top">
+
+    <div>
+
+        <h1>
+
+            DATA WAREHOUSE MFIX
+
+        </h1>
+
+    </div>
 
     <a href="/">
+
         Interface DW
+
     </a>
 
 </div>
 
-<div class="kpis">
+<!-- KPI -->
 
-    <div class="kpi">
-        <h2>{{ kpis[0].total_mov }}</h2>
-        <p>Movimentações</p>
+<div class="kpi-grid">
+
+    <div class="kpi-card">
+
+        <span>
+            Valor Total
+        </span>
+
+        <h2>
+            R$ {{ kpis[0].valor_total }}
+        </h2>
+
     </div>
 
-    <div class="kpi">
-        <h2>R$ {{ kpis[0].receita }}</h2>
-        <p>Receita</p>
+    <div class="kpi-card">
+
+        <span>
+            Quantidade Total
+        </span>
+
+        <h2>
+            {{ kpis[0].quantidade_total }}
+        </h2>
+
     </div>
 
-    <div class="kpi">
-        <h2>{{ kpis[0].produtos }}</h2>
-        <p>Produtos</p>
+    <div class="kpi-card">
+
+        <span>
+            Entradas
+        </span>
+
+        <h2>
+            {{ kpis[0].entradas }}
+        </h2>
+
+    </div>
+
+    <div class="kpi-card">
+
+        <span>
+            Saídas
+        </span>
+
+        <h2>
+            {{ kpis[0].saidas }}
+        </h2>
+
+    </div>
+
+    <div class="kpi-card">
+
+        <span>
+            Ajustes
+        </span>
+
+        <h2>
+            {{ kpis[0].ajustes }}
+        </h2>
+
+    </div>
+
+    <div class="kpi-card">
+
+        <span>
+            Ticket Médio
+        </span>
+
+        <h2>
+            R$ {{ kpis[0].ticket_medio }}
+        </h2>
+
     </div>
 
 </div>
 
+<!-- CHARTS -->
 
-<div class="grafico">
+<div class="charts-grid">
 
-<canvas id="graficoProdutos"></canvas>
+    <div class="chart-card">
 
-</div>
+        <h3>
+            Evolução Financeira
+        </h3>
 
+        <canvas id="linhaChart"></canvas>
 
-<div class="lista">
+    </div>
 
-<h2>TOP 5 PRODUTOS</h2>
+    <div class="chart-card">
 
-{% for p in top_produtos %}
+        <h3>
+            Top Produtos
+        </h3>
 
-<div class="produto"
-     onclick="abrirModal('{{p.descricao_prod}}')">
+        <canvas id="barChart"></canvas>
 
-    {{ p.descricao_prod }}
-    - {{ p.total }}
+    </div>
 
-</div>
+    <div class="chart-card">
 
-{% endfor %}
+        <h3>
+            Movimentações
+        </h3>
 
-</div>
+        <canvas id="pizzaChart"></canvas>
 
+    </div>
 
-<div id="modal" class="modal">
+    <div class="chart-card">
 
-<div class="modal-content">
+        <h3>
+            Top Fornecedores
+        </h3>
 
-<span class="fechar"
-      onclick="fecharModal()">
+        <canvas id="horizontalChart"></canvas>
 
-X
-
-</span>
-
-<div id="conteudoModal"></div>
+    </div>
 
 </div>
 
@@ -87,84 +173,127 @@ X
 
 <script>
 
-const produtos = {{ top_produtos|tojson }};
-
 new Chart(
-document.getElementById('graficoProdutos'),
+document.getElementById("linhaChart"),
 {
-    type: 'bar',
+    type:'line',
 
-    data: {
+    data:{
 
-        labels: produtos.map(p => p.descricao_prod),
+        labels:[
+            'Jan',
+            'Fev',
+            'Mar',
+            'Abr',
+            'Mai'
+        ],
 
-        datasets: [{
-            label: 'Quantidade',
-            data: produtos.map(p => p.total)
+        datasets:[{
+
+            data:[
+                12000,
+                19000,
+                15000,
+                26000,
+                31000
+            ],
+
+            borderColor:'#4e8cff',
+
+            tension:0.4
         }]
     }
-}
-);
+})
 
+new Chart(
+document.getElementById("barChart"),
+{
+    type:'bar',
 
-async function abrirModal(nome){
+    data:{
 
-    const resposta =
-    await fetch(`/produto/${nome}`);
+        labels:[
+            'Produto A',
+            'Produto B',
+            'Produto C'
+        ],
 
-    const dados =
-    await resposta.json();
+        datasets:[{
 
-    let html = "";
+            data:[
+                150,
+                120,
+                80
+            ],
 
-    dados.forEach(d => {
+            backgroundColor:'#4e8cff'
+        }]
+    }
+})
 
-        html += `
+new Chart(
+document.getElementById("pizzaChart"),
+{
+    type:'pie',
 
-        <div class="detalhe">
+    data:{
 
-            <h2>${d.descricao_prod}</h2>
+        labels:[
+            'Entrada',
+            'Saída',
+            'Ajuste'
+        ],
 
-            <p><b>Fornecedor:</b> ${d.nome_forn}</p>
+        datasets:[{
 
-            <p><b>Lote:</b> ${d.numero_lote}</p>
+            data:[
+                45,
+                40,
+                15
+            ],
 
-            <p><b>Validade:</b> ${d.data_validade_lote}</p>
+            backgroundColor:[
+                '#4e8cff',
+                '#2e63d1',
+                '#173d99'
+            ]
+        }]
+    }
+})
 
-            <p><b>Mov:</b> ${d.descricao_mov}</p>
+new Chart(
+document.getElementById("horizontalChart"),
+{
+    type:'bar',
 
-            <p><b>Quantidade:</b> ${d.quantidade}</p>
+    data:{
 
-            <p><b>Receita:</b> ${d.valor_total}</p>
+        labels:[
+            'Fornecedor A',
+            'Fornecedor B',
+            'Fornecedor C'
+        ],
 
-            <p><b>Transportadora:</b> ${d.nome_transp}</p>
+        datasets:[{
 
-            <p><b>Data:</b> ${d.data}</p>
+            data:[
+                250,
+                190,
+                130
+            ],
 
-        </div>
+            backgroundColor:'#4e8cff'
+        }]
+    },
 
-        <hr>
-        `
-    });
+    options:{
 
-    document
-    .getElementById("conteudoModal")
-    .innerHTML = html;
-
-    document
-    .getElementById("modal")
-    .style.display = "block";
-}
-
-
-function fecharModal(){
-
-    document
-    .getElementById("modal")
-    .style.display = "none";
-}
+        indexAxis:'y'
+    }
+})
 
 </script>
 
 </body>
+
 </html>
