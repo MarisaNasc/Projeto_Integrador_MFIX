@@ -33,7 +33,7 @@ def query_db(query, params={}):
     return df.to_dict(orient="records")
 
 # =========================================================
-# HOME
+# INTERFACE DW
 # =========================================================
 
 @app.route("/", methods=["GET", "POST"])
@@ -95,19 +95,19 @@ def home():
 
         FROM fato_movimentacao fm
 
-        JOIN dim_produto dp
+        LEFT JOIN dim_produto dp
         ON fm.id_produto = dp.id_produto
 
-        JOIN dim_fornecedor df
+        LEFT JOIN dim_fornecedor df
         ON fm.id_fornecedor = df.id_fornecedor
 
-        JOIN dim_tipo_mov tm
+        LEFT JOIN dim_tipo_mov tm
         ON fm.id_tipo_mov = tm.id_tipo_mov
 
-        JOIN dim_transportadora dt
+        LEFT JOIN dim_transportadora dt
         ON fm.id_transp = dt.id_transp
 
-        JOIN dim_lote dl
+        LEFT JOIN dim_lote dl
         ON fm.id_lote = dl.id_lote
 
         WHERE 1=1
@@ -125,7 +125,6 @@ def home():
         query += """
 
             AND LOWER(dp.descricao_prod)
-
             LIKE LOWER(:produto)
 
         """
@@ -141,7 +140,6 @@ def home():
         query += """
 
             AND LOWER(df.nome_forn)
-
             LIKE LOWER(:fornecedor)
 
         """
@@ -191,22 +189,15 @@ def home():
 
         params["data_final"] = data_final
 
-    # =====================================================
-    # FINAL QUERY
-    # =====================================================
-
     query += """
 
         ORDER BY fm.data DESC
 
-        LIMIT 60
+        LIMIT 50
 
     """
 
-    dados = query_db(
-        query,
-        params
-    )
+    dados = query_db(query, params)
 
     return render_template(
         "index.html",
@@ -214,31 +205,26 @@ def home():
     )
 
 # =========================================================
-# AUTOCOMPLETE PRODUTO
+# AUTOCOMPLETE
 # =========================================================
 
 @app.route("/autocomplete_produto")
 def autocomplete_produto():
 
-    termo = request.args.get(
-        "term", ""
-    )
+    termo = request.args.get("term", "")
 
     produtos = query_db("""
 
-        SELECT DISTINCT
-
-            descricao_prod
+        SELECT DISTINCT descricao_prod
 
         FROM dim_produto
 
         WHERE LOWER(descricao_prod)
-
         LIKE LOWER(:termo)
 
         ORDER BY descricao_prod
 
-        LIMIT 10
+        LIMIT 8
 
     """, {
 
@@ -249,100 +235,66 @@ def autocomplete_produto():
     return jsonify(produtos)
 
 # =========================================================
-# AUTOCOMPLETE FORNECEDOR
-# =========================================================
-
-@app.route("/autocomplete_fornecedor")
-def autocomplete_fornecedor():
-
-    termo = request.args.get(
-        "term", ""
-    )
-
-    fornecedores = query_db("""
-
-        SELECT DISTINCT
-
-            nome_forn
-
-        FROM dim_fornecedor
-
-        WHERE LOWER(nome_forn)
-
-        LIKE LOWER(:termo)
-
-        ORDER BY nome_forn
-
-        LIMIT 10
-
-    """, {
-
-        "termo": f"%{termo}%"
-
-    })
-
-    return jsonify(fornecedores)
-
-# =========================================================
 # DASHBOARD
 # =========================================================
+
+def consultar(query, params={}):
+    with engine.connect() as conn:
+        result = conn.execute(text(query), params)
+        df = pd.DataFrame(result.fetchall(), columns=result.keys())
+    return df.to_dict(orient="record")
+
 
 @app.route("/dashboard")
 def dashboard():
 
-    kpis = query_db("""
+    kpis = consultar("""
+    SELECT
+        COUNT(*) AS total_mov,
+        SUM(valor_total) AS receita,
+        SUM(quantidade) AS quantidade_total,
+        COUNT(DISTINCT id_produto) AS produtos
+    FROM fato_movimentacao
+    """)
 
-        SELECT
+    top_produtos = consultar("""
+    SELECT
+        p.descricao_prod,
+        SUM(fm.quantidade) AS total
 
-            COALESCE(
-                SUM(valor_total),0
-            ) AS valor_total,
+    FROM fato_movimentacao fm
 
-            COALESCE(
-                SUM(quantidade),0
-            ) AS quantidade_total,
+    JOIN dim_produto p
+    ON fm.id_produto = p.id_produto
 
-            COUNT(*) FILTER(
-                WHERE id_tipo_mov = 1
-            ) AS entradas,
+    GROUP BY p.descricao_prod
 
-            COUNT(*) FILTER(
-                WHERE id_tipo_mov = 2
-            ) AS saidas,
+    ORDER BY total DESC
+    LIMIT 5
+    """)
 
-            COUNT(*) FILTER(
-                WHERE id_tipo_mov = 3
-            ) AS ajustes,
+    entrada_saida = consultar("""
+    SELECT
+        tm.descricao_mov,
+        SUM(fm.quantidade) AS total
 
-            ROUND(
-                AVG(valor_total),2
-            ) AS ticket_medio,
+    FROM fato_movimentacao fm
 
-            COUNT(DISTINCT id_produto)
-            AS produtos_ativos,
+    JOIN dim_tipo_mov tm
+    ON fm.id_tipo_mov = tm.id_tipo_mov
 
-            SUM(quantidade)
-            AS estoque_atual,
-
-            COUNT(*)
-            AS total_movimentacoes,
-
-            COUNT(DISTINCT id_fornecedor)
-            AS total_fornecedores
-
-        FROM fato_movimentacao
-
+    GROUP BY tm.descricao_mov
     """)
 
     return render_template(
         "dashboard.html",
-        kpis=kpis
+        kpis=kpis,
+        top_produtos=top_produtos,
+        entrada_saida=entrada_saida
     )
-
 # =========================================================
 # START
 # =========================================================
 
 if __name__ == "__main__":
-
     app.run(debug=True)

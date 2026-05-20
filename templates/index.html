@@ -4,31 +4,22 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-    >
+<title>
 
-    <title>
+    MFIX Analytics
 
-        DATA WAREHOUSE MFIX
+</title>
 
-    </title>
-
-    <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}"
-    >
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}"
+>
 
 </head>
 
 <body>
-
-<!-- ================================================= -->
-<!-- TOPO -->
-<!-- ================================================= -->
 
 <div class="topbar">
 
@@ -44,31 +35,20 @@
 
     <a href="/dashboard">
 
-        Dashboard Executivo
+        Dashboard MFIX
 
     </a>
 
 </div>
 
-<!-- ================================================= -->
-<!-- FILTROS -->
-<!-- ================================================= -->
-
-<form
-method="POST"
-class="filtros"
->
-
-    <!-- ============================================= -->
-    <!-- PRODUTO -->
-    <!-- ============================================= -->
+<form method="POST" class="filtros">
 
     <div class="autocomplete-box">
 
         <input
         type="text"
-        id="produtoInput"
         name="produto"
+        id="produtoInput"
         placeholder="Pesquisar produto"
         autocomplete="off"
         >
@@ -80,21 +60,10 @@ class="filtros"
 
     </div>
 
-    <!-- ============================================= -->
-    <!-- FORNECEDOR -->
-    <!-- ============================================= -->
-
-    <input
-    type="text"
-    name="fornecedor"
-    placeholder="Fornecedor"
+    <select
+    name="movimentacao"
+    onchange="this.form.submit()"
     >
-
-    <!-- ============================================= -->
-    <!-- MOVIMENTAÇÃO -->
-    <!-- ============================================= -->
-
-    <select name="movimentacao">
 
         <option value="">
             Movimentação
@@ -114,27 +83,21 @@ class="filtros"
 
     </select>
 
-    <!-- ============================================= -->
-    <!-- DATA INICIAL -->
-    <!-- ============================================= -->
+    <input
+    type="text"
+    name="fornecedor"
+    placeholder="Fornecedor"
+    >
 
     <input
     type="date"
     name="data_inicial"
     >
 
-    <!-- ============================================= -->
-    <!-- DATA FINAL -->
-    <!-- ============================================= -->
-
     <input
     type="date"
     name="data_final"
     >
-
-    <!-- ============================================= -->
-    <!-- BOTÃO -->
-    <!-- ============================================= -->
 
     <button type="submit">
 
@@ -144,19 +107,11 @@ class="filtros"
 
 </form>
 
-<!-- ================================================= -->
-<!-- GRID DE CARDS -->
-<!-- ================================================= -->
-
 <div class="grid-cards">
 
 {% for item in dados %}
 
 <div class="card">
-
-    <!-- ========================================= -->
-    <!-- TITULO -->
-    <!-- ========================================= -->
 
     <h2>
 
@@ -164,96 +119,59 @@ class="filtros"
 
     </h2>
 
-    <!-- ========================================= -->
-    <!-- INFORMAÇÕES -->
-    <!-- ========================================= -->
-
     <p>
-
         <strong>Fornecedor:</strong>
-
         {{ item.nome_forn }}
-
     </p>
 
     <p>
-
         <strong>Movimentação:</strong>
-
         {{ item.descricao_mov }}
-
     </p>
 
     <p>
-
         <strong>Quantidade:</strong>
-
         {{ item.quantidade }}
-
     </p>
 
     <p>
-
-        <strong>Valor Total:</strong>
-
+        <strong>Valor:</strong>
         R$ {{ item.valor_total }}
-
     </p>
 
     <p>
-
         <strong>Categoria:</strong>
-
         {{ item.categoria_prod }}
-
     </p>
 
     <p>
-
         <strong>Procedência:</strong>
-
         {{ item.procedencia_prod }}
-
     </p>
 
     <p>
-
-        <strong>Transportadora:</strong>
-
-        {{ item.nome_transp }}
-
-    </p>
-
-    <p>
-
         <strong>Lote:</strong>
-
         {{ item.numero_lote }}
-
     </p>
 
     <p>
-
         <strong>Validade:</strong>
-
         {{ item.data_validade_lote }}
-
     </p>
 
     <p>
+        <strong>Transportadora:</strong>
+        {{ item.nome_transp }}
+    </p>
 
+    <p>
         <strong>Data:</strong>
-
         {{ item.data }}
-
     </p>
 
     <p>
-
         <strong>Maior venda:</strong>
-
         {{ item.melhor_venda }}
-
     </p>
 
 </div>
@@ -262,140 +180,65 @@ class="filtros"
 
 </div>
 
-<!-- ================================================= -->
-<!-- AUTOCOMPLETE -->
-<!-- ================================================= -->
-
 <script>
 
 const produtoInput =
-document.getElementById(
-    "produtoInput"
-)
+document.getElementById("produtoInput")
 
-const listaAutocomplete =
-document.getElementById(
-    "autocomplete-list"
-)
+const lista =
+document.getElementById("autocomplete-list")
 
-const formPesquisa =
-document.querySelector(
-    ".filtros"
-)
+produtoInput.addEventListener("keyup", async () => {
 
-async function buscarProdutos(){
+    const termo = produtoInput.value
 
-    const termo =
-    produtoInput.value.trim()
+    if(termo.length < 1){
 
-    // SEM TEXTO
-    if(termo.length <= 0){
-
-        listaAutocomplete.innerHTML = ""
-
-        listaAutocomplete.style.display = "none"
+        lista.style.display = "none"
 
         return
     }
 
-    try{
+    const response =
+    await fetch(
+        `/autocomplete_produto?term=${termo}`
+    )
 
-        // BUSCA FLASK
-        const response =
-        await fetch(
-            `/autocomplete_produto?term=${encodeURIComponent(termo)}`
+    const data =
+    await response.json()
+
+    lista.innerHTML = ""
+
+    lista.style.display = "block"
+
+    data.forEach(item => {
+
+        const div =
+        document.createElement("div")
+
+        div.classList.add(
+            "autocomplete-item"
         )
 
-        const produtos =
-        await response.json()
+        div.innerText =
+        item.descricao_prod
 
-        // LIMPA
-        listaAutocomplete.innerHTML = ""
+        div.onclick = () => {
 
-        // SEM RESULTADOS
-        if(produtos.length === 0){
+            produtoInput.value =
+            item.descricao_prod
 
-            listaAutocomplete.style.display = "none"
+            lista.style.display = "none"
 
-            return
+            document.forms[0].submit()
+
         }
 
-        // MOSTRA
-        listaAutocomplete.style.display = "block"
+        lista.appendChild(div)
 
-        // LOOP
-        produtos.forEach(produto => {
+    })
 
-            // ITEM
-            const item =
-            document.createElement("div")
-
-            item.classList.add(
-                "autocomplete-item"
-            )
-
-            item.innerText =
-            produto.descricao_prod
-
-            // CLICK
-            item.addEventListener(
-                "click",
-
-                () => {
-
-                    // PREENCHE
-                    produtoInput.value =
-                    produto.descricao_prod
-
-                    // FECHA
-                    listaAutocomplete.innerHTML = ""
-
-                    listaAutocomplete.style.display = "none"
-
-                    // ENVIA FORM
-                    formPesquisa.submit()
-                }
-            )
-
-            // ADD
-            listaAutocomplete.appendChild(item)
-
-        })
-
-    }catch(erro){
-
-        console.log(
-            erro
-        )
-    }
-}
-
-// DIGITAÇÃO
-produtoInput.addEventListener(
-    "keyup",
-    buscarProdutos
-)
-
-// FECHAR LISTA
-document.addEventListener(
-    "click",
-
-    function(e){
-
-        if(
-
-            !produtoInput.contains(e.target)
-
-            &&
-
-            !listaAutocomplete.contains(e.target)
-
-        ){
-
-            listaAutocomplete.style.display = "none"
-        }
-    }
-)
+})
 
 </script>
 

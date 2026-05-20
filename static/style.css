@@ -18,15 +18,7 @@ body{
 
     align-items:center;
 
-    padding:25px 40px;
-}
-
-.topbar h1,
-.dashboard-top h1{
-
-    margin:0;
-
-    font-size:38px;
+    padding:30px;
 }
 
 .topbar a,
@@ -34,15 +26,13 @@ body{
 
     background:#3478ff;
 
-    padding:14px 22px;
+    padding:12px 20px;
 
     border-radius:12px;
 
     color:white;
 
     text-decoration:none;
-
-    font-weight:bold;
 }
 
 .filtros{
@@ -53,7 +43,7 @@ body{
 
     flex-wrap:wrap;
 
-    padding:10px 40px 30px;
+    padding:20px 30px;
 }
 
 .filtros input,
@@ -65,13 +55,11 @@ body{
 
     color:white;
 
-    padding:15px;
+    padding:14px;
 
     border-radius:12px;
 
     min-width:220px;
-
-    outline:none;
 }
 
 .filtros button{
@@ -82,13 +70,11 @@ body{
 
     color:white;
 
-    padding:15px 25px;
+    padding:14px 25px;
 
     border-radius:12px;
 
     cursor:pointer;
-
-    font-weight:bold;
 }
 
 .grid-cards{
@@ -96,39 +82,23 @@ body{
     display:grid;
 
     grid-template-columns:
-    repeat(auto-fit,minmax(340px,1fr));
+    repeat(3,1fr);
 
-    gap:22px;
+    gap:20px;
 
-    padding:0 40px 40px;
+    padding:30px;
 }
 
 .card{
 
     background:#10203a;
 
-    border-radius:22px;
+    border-radius:20px;
 
     padding:25px;
 
     box-shadow:
     0 10px 30px rgba(0,0,0,0.35);
-}
-
-.card h2{
-
-    margin-top:0;
-
-    margin-bottom:25px;
-
-    font-size:34px;
-}
-
-.card p{
-
-    margin:12px 0;
-
-    line-height:1.5;
 }
 
 .autocomplete-box{
@@ -140,7 +110,7 @@ body{
 
     position:absolute;
 
-    top:58px;
+    top:55px;
 
     width:100%;
 
@@ -151,9 +121,6 @@ body{
     overflow:hidden;
 
     z-index:999;
-
-    box-shadow:
-    0 10px 25px rgba(0,0,0,0.4);
 }
 
 .autocomplete-item{
@@ -168,58 +135,19 @@ body{
     background:#3478ff;
 }
 
-.kpi-grid{
+@media(max-width:1200px){
 
-    display:grid;
+    .grid-cards{
 
-    grid-template-columns:
-    repeat(auto-fit,minmax(240px,1fr));
-
-    gap:20px;
-
-    padding:30px 40px;
+        grid-template-columns:
+        repeat(2,1fr);
+    }
 }
 
-.kpi-card{
+@media(max-width:700px){
 
-    background:#10203a;
+    .grid-cards{
 
-    border-radius:20px;
-
-    padding:25px;
-}
-
-.kpi-card span{
-
-    color:#8ea6c9;
-}
-
-.kpi-card h2{
-
-    margin-bottom:0;
-
-    margin-top:15px;
-
-    font-size:32px;
-}
-
-.charts-grid{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(500px,1fr));
-
-    gap:20px;
-
-    padding:0 40px 40px;
-}
-
-.chart-card{
-
-    background:#10203a;
-
-    border-radius:20px;
-
-    padding:25px;
+        grid-template-columns:1fr;
+    }
 }
