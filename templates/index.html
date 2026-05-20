@@ -4,42 +4,60 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<title>
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+    >
 
-    MFIX Analytics
+    <title>
+        MFIX Analytics
+    </title>
 
-</title>
-
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='style.css') }}"
->
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+    >
 
 </head>
 
 <body>
 
-<div class="topbar">
+<!-- =====================================================
+HEADER
+===================================================== -->
 
-    <div>
+<header class="topbar">
+
+    <div class="titulo-area">
 
         <h1>
 
-            DATA WAREHOUSE MFIX
+            DATA WAREHOUSE
+            <span>MFIX</span>
 
         </h1>
+
+        <p>
+
+            Central de monitoramento e inteligência logística
+
+        </p>
 
     </div>
 
     <a href="/dashboard">
 
-        Dashboard MFIX
+        DASHBOARD BI
 
     </a>
 
-</div>
+</header>
+
+<!-- =====================================================
+FILTROS
+===================================================== -->
 
 <form method="POST" class="filtros">
 
@@ -60,25 +78,22 @@ href="{{ url_for('static', filename='style.css') }}"
 
     </div>
 
-    <select
-    name="movimentacao"
-    onchange="this.form.submit()"
-    >
+    <select name="movimentacao">
 
         <option value="">
             Movimentação
         </option>
 
         <option value="1">
-            ENTRADA
+            Entrada
         </option>
 
         <option value="2">
-            SAÍDA
+            Saída
         </option>
 
         <option value="3">
-            AJUSTE
+            Ajuste
         </option>
 
     </select>
@@ -101,11 +116,15 @@ href="{{ url_for('static', filename='style.css') }}"
 
     <button type="submit">
 
-        Pesquisar
+        PESQUISAR
 
     </button>
 
 </form>
+
+<!-- =====================================================
+CARDS
+===================================================== -->
 
 <div class="grid-cards">
 
@@ -113,72 +132,115 @@ href="{{ url_for('static', filename='style.css') }}"
 
 <div class="card">
 
+    <div class="card-top">
+
+        <div class="status
+        {% if item.descricao_mov == 'ENTRADA' %}
+        entrada
+        {% elif item.descricao_mov == 'SAÍDA' %}
+        saida
+        {% else %}
+        ajuste
+        {% endif %}
+        ">
+
+            {{ item.descricao_mov }}
+
+        </div>
+
+    </div>
+
     <h2>
 
         {{ item.descricao_prod }}
 
     </h2>
 
-    <p>
-        <strong>Fornecedor:</strong>
-        {{ item.nome_forn }}
-    </p>
+    <div class="linha"></div>
 
-    <p>
-        <strong>Movimentação:</strong>
-        {{ item.descricao_mov }}
-    </p>
+    <div class="info">
 
-    <p>
-        <strong>Quantidade:</strong>
-        {{ item.quantidade }}
-    </p>
+        <p>
 
-    <p>
-        <strong>Valor:</strong>
-        R$ {{ item.valor_total }}
-    </p>
+            <strong>Fornecedor</strong>
+            {{ item.nome_forn }}
 
-    <p>
-        <strong>Categoria:</strong>
-        {{ item.categoria_prod }}
-    </p>
+        </p>
 
-    <p>
-        <strong>Procedência:</strong>
-        {{ item.procedencia_prod }}
-    </p>
+        <p>
 
-    <p>
-        <strong>Lote:</strong>
-        {{ item.numero_lote }}
-    </p>
+            <strong>Quantidade</strong>
+            {{ item.quantidade }}
 
-    <p>
-        <strong>Validade:</strong>
-        {{ item.data_validade_lote }}
-    </p>
+        </p>
 
-    <p>
-        <strong>Transportadora:</strong>
-        {{ item.nome_transp }}
-    </p>
+        <p>
 
-    <p>
-        <strong>Data:</strong>
-        {{ item.data }}
-    </p>
+            <strong>Valor</strong>
+            R$ {{ item.valor_total }}
 
-    <p>
-        <strong>Maior venda:</strong>
-        {{ item.melhor_venda }}
-    </p>
+        </p>
+
+        <p>
+
+            <strong>Categoria</strong>
+            {{ item.categoria_prod }}
+
+        </p>
+
+        <p>
+
+            <strong>Procedência</strong>
+            {{ item.procedencia_prod }}
+
+        </p>
+
+        <p>
+
+            <strong>Lote</strong>
+            {{ item.numero_lote }}
+
+        </p>
+
+        <p>
+
+            <strong>Validade</strong>
+            {{ item.data_validade_lote }}
+
+        </p>
+
+        <p>
+
+            <strong>Transportadora</strong>
+            {{ item.nome_transp }}
+
+        </p>
+
+        <p>
+
+            <strong>Data</strong>
+            {{ item.data }}
+
+        </p>
+
+        <p>
+
+            <strong>Maior venda</strong>
+            {{ item.melhor_venda }}
+
+        </p>
+
+    </div>
 
 </div>
 
 {% endfor %}
 
 </div>
+
+<!-- =====================================================
+SCRIPT AUTOCOMPLETE
+===================================================== -->
 
 <script>
 
@@ -190,7 +252,8 @@ document.getElementById("autocomplete-list")
 
 produtoInput.addEventListener("keyup", async () => {
 
-    const termo = produtoInput.value
+    const termo =
+    produtoInput.value
 
     if(termo.length < 1){
 
@@ -229,15 +292,10 @@ produtoInput.addEventListener("keyup", async () => {
             item.descricao_prod
 
             lista.style.display = "none"
-
-            document.forms[0].submit()
-
         }
 
         lista.appendChild(div)
-
     })
-
 })
 
 </script>

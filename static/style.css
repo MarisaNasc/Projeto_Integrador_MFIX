@@ -9,27 +9,26 @@ body{
     background:
     linear-gradient(
         180deg,
-        #06080f 0%,
-        #0b1220 45%,
-        #170607 100%
+        #05070d 0%,
+        #09111f 50%,
+        #180607 100%
     );
 
-    color:white;
+    min-height:100vh;
 
     font-family:
     "Segoe UI",
     Arial,
     sans-serif;
 
-    min-height:100vh;
+    color:white;
 }
 
 /* =====================================================
 TOPBAR
 ===================================================== */
 
-.topbar,
-.dashboard-top{
+.topbar{
 
     display:flex;
 
@@ -37,71 +36,78 @@ TOPBAR
 
     align-items:flex-start;
 
-    padding:30px 45px;
+    padding:35px 50px;
 
     border-bottom:
     1px solid rgba(255,255,255,0.05);
 
     background:
-    rgba(8,10,16,0.96);
+    rgba(6,10,18,0.96);
 }
 
-/* =====================================================
-TÍTULO
-===================================================== */
-
-.topbar h1,
-.dashboard-top h1{
+.titulo-area h1{
 
     display:flex;
 
     align-items:center;
 
-    gap:12px;
+    gap:14px;
 
-    font-size:54px;
+    font-size:56px;
 
     font-weight:900;
 
     letter-spacing:1px;
-
-    color:#f5f5f5;
 
     text-transform:uppercase;
 
-    line-height:1;
+    color:white;
 }
 
-.topbar h1 span,
-.dashboard-top h1 span{
+/* =====================================================
+MFIX
+===================================================== */
 
-    background:#4a4343;
+.titulo-area h1 span{
 
-    color:#1a1a1a;
+    background:#595959;
 
-    padding:5px 10px;
+    color:white;
 
-    border-radius:2px;
+    padding:6px 14px;
 
-    font-size:40px;
+    border-radius:4px;
+
+    font-size:38px;
 
     font-weight:900;
 
-    letter-spacing:1px;
+    letter-spacing:2px;
+
+    border:
+    1px solid rgba(255,255,255,0.08);
+}
+
+.titulo-area p{
+
+    margin-top:12px;
+
+    color:#8d96a5;
+
+    font-size:15px;
 }
 
 /* =====================================================
 BOTÃO
 ===================================================== */
 
-.topbar a,
-.dashboard-top a{
+.topbar a{
 
     background:
     linear-gradient(
         180deg,
         #ff2d2d,
-        #9f0b0b
+        #a40d0d
     );
 
     color:white;
@@ -115,14 +121,6 @@ BOTÃO
     font-size:14px;
 
     font-weight:700;
-
-    transition:0.2s;
-}
-
-.topbar a:hover,
-.dashboard-top a:hover{
-
-    opacity:0.92;
 }
 
 /* =====================================================
@@ -133,95 +131,48 @@ FILTROS
 
     display:flex;
 
-    gap:14px;
+    gap:16px;
 
     flex-wrap:wrap;
 
-    padding:30px 45px;
+    padding:35px 50px;
 }
-
-/* =====================================================
-TODOS OS CAMPOS
-===================================================== */
 
 .filtros input,
-.filtros select,
-.filtros button{
-
-    height:58px;
-}
-
-/* =====================================================
-INPUTS
-===================================================== */
-
-.filtros input{
-
-    background:#131d31 !important;
-
-    border:
-    1px solid rgba(255,255,255,0.06);
-
-    color:#f5f5f5 !important;
-
-    padding:16px 18px;
-
-    border-radius:14px;
-
-    min-width:220px;
-
-    outline:none;
-
-    font-size:15px;
-
-    transition:0.2s;
-
-    box-shadow:none !important;
-}
-
-.filtros input::placeholder{
-
-    color:#8c96a8 !important;
-
-    opacity:1;
-}
-
-/* =====================================================
-SELECT MOVIMENTAÇÃO
-===================================================== */
-
 .filtros select{
 
-    background-color:#131d31 !important;
+    background:#121b2e !important;
 
     border:
-    1px solid rgba(255,255,255,0.06);
+    1px solid rgba(255,255,255,0.05);
 
-    color:#f5f5f5 !important;
+    color:white !important;
 
-    padding-left:18px;
+    height:58px;
 
-    padding-right:50px;
+    padding:0 18px;
 
-    border-radius:14px;
+    border-radius:16px;
 
     min-width:220px;
 
     outline:none;
 
     font-size:15px;
-
-    cursor:pointer;
-
-    transition:0.2s;
 
     appearance:none;
 
     -webkit-appearance:none;
 
     -moz-appearance:none;
+}
 
-    box-shadow:none !important;
+.filtros input::placeholder{
+
+    color:#8b95a7;
+}
+
+.filtros select{
 
     background-image:
     url("data:image/svg+xml;utf8,<svg fill='white' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
@@ -229,36 +180,19 @@ SELECT MOVIMENTAÇÃO
     background-repeat:no-repeat;
 
     background-position:
-    right 16px center;
+    right 15px center;
 
-    background-size:16px;
+    padding-right:45px;
+
+    cursor:pointer;
 }
-
-/* =====================================================
-OPTIONS
-===================================================== */
 
 .filtros select option{
 
-    background:#131d31 !important;
+    background:#121b2e;
 
-    color:#f5f5f5 !important;
+    color:white;
 }
-
-/* =====================================================
-FOCUS
-===================================================== */
-
-.filtros input:focus,
-.filtros select:focus{
-
-    border:
-    1px solid rgba(255,70,70,0.35);
-}
-
-/* =====================================================
-BOTÃO PESQUISAR
-===================================================== */
 
 .filtros button{
 
@@ -266,29 +200,24 @@ BOTÃO PESQUISAR
     linear-gradient(
         180deg,
         #ff2d2d,
-        #a80d0d
+        #a40d0d
     );
 
     border:none;
 
     color:white;
 
-    padding:16px 30px;
+    padding:0 28px;
 
-    border-radius:14px;
+    height:58px;
+
+    border-radius:16px;
 
     cursor:pointer;
 
     font-weight:700;
 
-    font-size:15px;
-
-    transition:0.2s;
-}
-
-.filtros button:hover{
-
-    opacity:0.92;
+    font-size:14px;
 }
 
 /* =====================================================
@@ -302,13 +231,13 @@ GRID
     grid-template-columns:
     repeat(3,1fr);
 
-    gap:22px;
+    gap:25px;
 
-    padding:0 45px 45px 45px;
+    padding:0 50px 50px 50px;
 }
 
 /* =====================================================
-CARDS
+CARD
 ===================================================== */
 
 .card{
@@ -317,22 +246,22 @@ CARDS
     linear-gradient(
         180deg,
         #111827 0%,
-        #0d1524 100%
+        #0b1422 100%
     );
+
+    border-radius:22px;
+
+    padding:30px;
+
+    border-top:
+    4px solid #ff2d2d;
 
     border:
     1px solid rgba(255,255,255,0.05);
 
-    border-top:
-    3px solid #ff2d2d;
-
-    border-radius:20px;
-
-    padding:32px;
+    min-height:540px;
 
     transition:0.2s;
-
-    min-height:520px;
 }
 
 .card:hover{
@@ -340,41 +269,133 @@ CARDS
     transform:translateY(-3px);
 }
 
-.card h2{
+.card-top{
 
-    margin-bottom:28px;
+    display:flex;
+
+    justify-content:flex-end;
+
+    margin-bottom:18px;
+}
+
+/* =====================================================
+STATUS
+===================================================== */
+
+.status{
+
+    padding:9px 15px;
+
+    border-radius:10px;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+}
+
+/* ENTRADA */
+
+.entrada{
+
+    background:
+    rgba(0,255,120,0.12);
+
+    color:#38ff9c;
+
+    border:
+    1px solid rgba(0,255,120,0.18);
+}
+
+/* SAÍDA */
+
+.saida{
+
+    background:
+    rgba(255,45,45,0.12);
+
+    color:#ff6262;
+
+    border:
+    1px solid rgba(255,45,45,0.18);
+}
+
+/* AJUSTE */
+
+.ajuste{
+
+    background:
+    rgba(255,208,0,0.12);
+
+    color:#ffd84f;
+
+    border:
+    1px solid rgba(255,208,0,0.18);
+}
+
+.card h2{
 
     font-size:30px;
 
     line-height:1.3;
 
-    color:white;
-
-    font-weight:900;
+    margin-bottom:22px;
 
     text-transform:uppercase;
 }
 
-.card p{
+.linha{
 
-    margin-bottom:18px;
+    width:100%;
+
+    height:1px;
+
+    background:
+    rgba(255,255,255,0.06);
+
+    margin-bottom:25px;
+}
+
+/* =====================================================
+INFO
+===================================================== */
+
+.info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+}
+
+.info p{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
 
     color:#d5dbe6;
 
-    line-height:1.7;
-
     font-size:17px;
 
-    font-weight:500;
+    line-height:1.5;
 }
 
-.card strong{
+.info strong{
 
     color:#ff4b4b;
 
-    font-weight:800;
+    font-size:15px;
 
-    font-size:17px;
+    text-transform:uppercase;
+
+    letter-spacing:1px;
 }
 
 /* =====================================================
@@ -390,7 +411,7 @@ AUTOCOMPLETE
 
     position:absolute;
 
-    top:60px;
+    top:64px;
 
     width:100%;
 
@@ -415,8 +436,6 @@ AUTOCOMPLETE
     transition:0.2s;
 
     color:#d8dde7;
-
-    font-size:15px;
 }
 
 .autocomplete-item:hover{
@@ -447,7 +466,7 @@ SCROLLBAR
 }
 
 /* =====================================================
-RESPONSIVIDADE
+RESPONSIVO
 ===================================================== */
 
 @media(max-width:1500px){
@@ -469,37 +488,32 @@ RESPONSIVIDADE
 
 @media(max-width:780px){
 
-    .topbar,
-    .dashboard-top{
+    .topbar{
 
         flex-direction:column;
 
         gap:20px;
-
-        align-items:flex-start;
     }
 
-    .topbar h1,
-    .dashboard-top h1{
+    .titulo-area h1{
 
-        font-size:36px;
+        font-size:38px;
     }
 
-    .topbar h1 span,
-    .dashboard-top h1 span{
+    .titulo-area h1 span{
 
         font-size:28px;
     }
 
+    .topbar,
     .filtros{
 
         padding:25px;
     }
 
-    .topbar,
-    .dashboard-top{
+    .grid-cards{
 
-        padding:25px;
+        padding:0 25px 25px 25px;
     }
 
     .card{
