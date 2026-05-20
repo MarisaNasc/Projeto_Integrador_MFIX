@@ -1,13 +1,32 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
 body{
 
-    margin:0;
-
-    background:#071327;
+    background:
+    linear-gradient(
+        180deg,
+        #06080f 0%,
+        #0b1220 45%,
+        #170607 100%
+    );
 
     color:white;
 
-    font-family:Arial;
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+    min-height:100vh;
 }
+
+/* =====================================================
+TOPBAR
+===================================================== */
 
 .topbar,
 .dashboard-top{
@@ -16,66 +35,265 @@ body{
 
     justify-content:space-between;
 
+    align-items:flex-start;
+
+    padding:30px 45px;
+
+    border-bottom:
+    1px solid rgba(255,255,255,0.05);
+
+    background:
+    rgba(8,10,16,0.96);
+}
+
+/* =====================================================
+TÍTULO
+===================================================== */
+
+.topbar h1,
+.dashboard-top h1{
+
+    display:flex;
+
     align-items:center;
 
-    padding:30px;
+    gap:12px;
+
+    font-size:54px;
+
+    font-weight:900;
+
+    letter-spacing:1px;
+
+    color:#f5f5f5;
+
+    text-transform:uppercase;
+
+    line-height:1;
 }
+
+.topbar h1 span,
+.dashboard-top h1 span{
+
+    background:#4a4343;
+
+    color:#1a1a1a;
+
+    padding:5px 10px;
+
+    border-radius:2px;
+
+    font-size:40px;
+
+    font-weight:900;
+
+    letter-spacing:1px;
+}
+
+/* =====================================================
+BOTÃO
+===================================================== */
 
 .topbar a,
 .dashboard-top a{
 
-    background:#3478ff;
-
-    padding:12px 20px;
-
-    border-radius:12px;
+    background:
+    linear-gradient(
+        180deg,
+        #ff2d2d,
+        #9f0b0b
+    );
 
     color:white;
 
     text-decoration:none;
+
+    padding:16px 28px;
+
+    border-radius:14px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    transition:0.2s;
 }
+
+.topbar a:hover,
+.dashboard-top a:hover{
+
+    opacity:0.92;
+}
+
+/* =====================================================
+FILTROS
+===================================================== */
 
 .filtros{
 
     display:flex;
 
-    gap:15px;
+    gap:14px;
 
     flex-wrap:wrap;
 
-    padding:20px 30px;
+    padding:30px 45px;
 }
+
+/* =====================================================
+TODOS OS CAMPOS
+===================================================== */
 
 .filtros input,
-.filtros select{
+.filtros select,
+.filtros button{
 
-    background:#10203a;
+    height:58px;
+}
 
-    border:none;
+/* =====================================================
+INPUTS
+===================================================== */
 
-    color:white;
+.filtros input{
 
-    padding:14px;
+    background:#131d31 !important;
 
-    border-radius:12px;
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    color:#f5f5f5 !important;
+
+    padding:16px 18px;
+
+    border-radius:14px;
 
     min-width:220px;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:0.2s;
+
+    box-shadow:none !important;
 }
+
+.filtros input::placeholder{
+
+    color:#8c96a8 !important;
+
+    opacity:1;
+}
+
+/* =====================================================
+SELECT MOVIMENTAÇÃO
+===================================================== */
+
+.filtros select{
+
+    background-color:#131d31 !important;
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    color:#f5f5f5 !important;
+
+    padding-left:18px;
+
+    padding-right:50px;
+
+    border-radius:14px;
+
+    min-width:220px;
+
+    outline:none;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    -moz-appearance:none;
+
+    box-shadow:none !important;
+
+    background-image:
+    url("data:image/svg+xml;utf8,<svg fill='white' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+
+    background-repeat:no-repeat;
+
+    background-position:
+    right 16px center;
+
+    background-size:16px;
+}
+
+/* =====================================================
+OPTIONS
+===================================================== */
+
+.filtros select option{
+
+    background:#131d31 !important;
+
+    color:#f5f5f5 !important;
+}
+
+/* =====================================================
+FOCUS
+===================================================== */
+
+.filtros input:focus,
+.filtros select:focus{
+
+    border:
+    1px solid rgba(255,70,70,0.35);
+}
+
+/* =====================================================
+BOTÃO PESQUISAR
+===================================================== */
 
 .filtros button{
 
-    background:#3478ff;
+    background:
+    linear-gradient(
+        180deg,
+        #ff2d2d,
+        #a80d0d
+    );
 
     border:none;
 
     color:white;
 
-    padding:14px 25px;
+    padding:16px 30px;
 
-    border-radius:12px;
+    border-radius:14px;
 
     cursor:pointer;
+
+    font-weight:700;
+
+    font-size:15px;
+
+    transition:0.2s;
 }
+
+.filtros button:hover{
+
+    opacity:0.92;
+}
+
+/* =====================================================
+GRID
+===================================================== */
 
 .grid-cards{
 
@@ -84,22 +302,84 @@ body{
     grid-template-columns:
     repeat(3,1fr);
 
-    gap:20px;
+    gap:22px;
 
-    padding:30px;
+    padding:0 45px 45px 45px;
 }
+
+/* =====================================================
+CARDS
+===================================================== */
 
 .card{
 
-    background:#10203a;
+    background:
+    linear-gradient(
+        180deg,
+        #111827 0%,
+        #0d1524 100%
+    );
+
+    border:
+    1px solid rgba(255,255,255,0.05);
+
+    border-top:
+    3px solid #ff2d2d;
 
     border-radius:20px;
 
-    padding:25px;
+    padding:32px;
 
-    box-shadow:
-    0 10px 30px rgba(0,0,0,0.35);
+    transition:0.2s;
+
+    min-height:520px;
 }
+
+.card:hover{
+
+    transform:translateY(-3px);
+}
+
+.card h2{
+
+    margin-bottom:28px;
+
+    font-size:30px;
+
+    line-height:1.3;
+
+    color:white;
+
+    font-weight:900;
+
+    text-transform:uppercase;
+}
+
+.card p{
+
+    margin-bottom:18px;
+
+    color:#d5dbe6;
+
+    line-height:1.7;
+
+    font-size:17px;
+
+    font-weight:500;
+}
+
+.card strong{
+
+    color:#ff4b4b;
+
+    font-weight:800;
+
+    font-size:17px;
+}
+
+/* =====================================================
+AUTOCOMPLETE
+===================================================== */
 
 .autocomplete-box{
 
@@ -110,32 +390,67 @@ body{
 
     position:absolute;
 
-    top:55px;
+    top:60px;
 
     width:100%;
 
-    background:#10203a;
+    background:#111827;
 
-    border-radius:12px;
+    border-radius:14px;
 
     overflow:hidden;
 
     z-index:999;
+
+    border:
+    1px solid rgba(255,255,255,0.05);
 }
 
 .autocomplete-item{
 
-    padding:14px;
+    padding:15px;
 
     cursor:pointer;
+
+    transition:0.2s;
+
+    color:#d8dde7;
+
+    font-size:15px;
 }
 
 .autocomplete-item:hover{
 
-    background:#3478ff;
+    background:
+    rgba(255,45,45,0.10);
 }
 
-@media(max-width:1200px){
+/* =====================================================
+SCROLLBAR
+===================================================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+
+    background:#0b0f18;
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#7a0000;
+
+    border-radius:20px;
+}
+
+/* =====================================================
+RESPONSIVIDADE
+===================================================== */
+
+@media(max-width:1500px){
 
     .grid-cards{
 
@@ -144,10 +459,51 @@ body{
     }
 }
 
-@media(max-width:700px){
+@media(max-width:1000px){
 
     .grid-cards{
 
         grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:780px){
+
+    .topbar,
+    .dashboard-top{
+
+        flex-direction:column;
+
+        gap:20px;
+
+        align-items:flex-start;
+    }
+
+    .topbar h1,
+    .dashboard-top h1{
+
+        font-size:36px;
+    }
+
+    .topbar h1 span,
+    .dashboard-top h1 span{
+
+        font-size:28px;
+    }
+
+    .filtros{
+
+        padding:25px;
+    }
+
+    .topbar,
+    .dashboard-top{
+
+        padding:25px;
+    }
+
+    .card{
+
+        min-height:auto;
     }
 }
