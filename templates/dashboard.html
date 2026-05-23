@@ -1,172 +1,353 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="pt-br">
+
 <head>
 
-    <title>Dashboard BI</title>
+<meta charset="UTF-8">
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
 
-    <link rel="stylesheet" href="/static/style.css">
+<title>
+
+Dashboard BI
+
+</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link
+rel="stylesheet"
+href="/static/style.css"
+>
 
 </head>
 
 <body>
 
-<div class="topo">
+<div class="dashboard-container">
 
-    <h1>DASHBOARD BI</h1>
+<div class="topo-dashboard">
+
+    <div>
+
+        <span class="mini-title">
+
+            • MFIX · BUSINESS INTELLIGENCE
+
+        </span>
+
+        <h1>
+
+            DASHBOARD BI
+
+        </h1>
+
+    </div>
 
     <a href="/">
-        Interface DW
+
+        INTERFACE DW
+
     </a>
 
 </div>
 
-<div class="x">
-    <div class="kpis">
+<!-- KPI -->
 
-        <div class="kpi">
-            <h2>{{ kpis[0].total_mov }}</h2>
-            <p>Movimentações</p>
-        </div>
+<div class="kpis-grid">
 
-        <div class="kpi">
-            <h2>R$ {{ kpis[0].receita }}</h2>
-            <p>Receita</p>
-        </div>
-
-        <div class="kpi">
-            <h2>{{ kpis[0].produtos }}</h2>
-            <p>Produtos</p>
-        </div>
-
+    <div class="kpi-card">
+        <span>RECEITA TOTAL</span>
+        <h2>R$ {{ kpis[0].receita }}</h2>
     </div>
+
+    <div class="kpi-card">
+        <span>MOVIMENTAÇÕES</span>
+        <h2>{{ kpis[0].total_mov }}</h2>
+    </div>
+
+    <div class="kpi-card">
+        <span>PRODUTOS</span>
+        <h2>{{ kpis[0].produtos }}</h2>
+    </div>
+
+    <div class="kpi-card">
+        <span>FORNECEDORES</span>
+        <h2>{{ kpis[0].fornecedores }}</h2>
+    </div>
+
+    <div class="kpi-card">
+        <span>TICKET MÉDIO</span>
+        <h2>R$ {{ kpis[0].ticket_medio }}</h2>
+    </div>
+
+    <div class="kpi-card">
+        <span>QUANTIDADE</span>
+        <h2>{{ kpis[0].quantidade_total }}</h2>
+    </div>
+
 </div>
 
-<div class="quadradinho">
-    <div class="grafico">
+<!-- GRÁFICOS -->
+
+<div class="dashboard-grid">
+
+    <div class="grafico-card grande">
+
+        <h3>
+
+            Evolução Financeira
+
+        </h3>
+
+        <canvas id="graficoLinha"></canvas>
+
+    </div>
+
+    <div class="grafico-card">
+
+        <h3>
+
+            Entrada x Saída x Ajuste
+
+        </h3>
+
+        <canvas id="graficoPizza"></canvas>
+
+    </div>
+
+    <div class="grafico-card">
+
+        <h3>
+
+            Top Produtos
+
+        </h3>
 
         <canvas id="graficoProdutos"></canvas>
 
     </div>
-</div>
 
+    <div class="grafico-card">
 
-<div class="lista">
+        <h3>
 
-<h2>TOP 5 PRODUTOS</h2>
+            Top Fornecedores
 
-{% for p in top_produtos %}
+        </h3>
 
-<div class="produto"
-     onclick="abrirModal('{{p.descricao_prod}}')">
+        <canvas id="graficoFornecedor"></canvas>
 
-    {{ p.descricao_prod }}
-    - {{ p.total }}
+    </div>
 
-</div>
+    <div class="grafico-card">
 
-{% endfor %}
+        <h3>
 
-</div>
+            Categorias
 
+        </h3>
 
-<div id="modal" class="modal">
+        <canvas id="graficoCategorias"></canvas>
 
-<div class="modal-content">
-
-<span class="fechar"
-      onclick="fecharModal()">
-
-X
-
-</span>
-
-<div id="conteudoModal"></div>
+    </div>
 
 </div>
 
+<!-- INSIGHT -->
+
+<div class="insight-card">
+
+    <span>
+
+        PRODUTO CAMPEÃO
+
+    </span>
+
+    <h2>
+
+        {{ produto_campeao[0].descricao_prod }}
+
+    </h2>
+
+    <p>
+
+        {{ produto_campeao[0].total }}
+        movimentações registradas
+
+    </p>
+
 </div>
 
-<script type="">
+</div>
 
-const produtos = {{ top_produtos|tojson }};
+<script>
+
+const topProdutos =
+{{ top_produtos|tojson }}
+
+const movimentacoes =
+{{ movimentacoes|tojson }}
+
+const evolucao =
+{{ evolucao|tojson }}
+
+const fornecedores =
+{{ fornecedores|tojson }}
+
+const categorias =
+{{ categorias|tojson }}
 
 new Chart(
-document.getElementById('graficoProdutos'),
+
+document.getElementById("graficoLinha"),
+
 {
-    type: 'bar',
+    type:'line',
 
-    data: {
+    data:{
 
-        labels: produtos.map(p => p.descricao_prod),
+        labels:
+        evolucao.map(e => e.mes),
 
-        datasets: [{
-            label: 'Quantidade',
-            data: produtos.map(p => p.total)
+        datasets:[{
+
+            label:'Receita',
+
+            data:
+            evolucao.map(e => e.total),
+
+            borderColor:'#ff2d2d',
+
+            backgroundColor:
+            'rgba(255,45,45,0.1)',
+
+            tension:0.4,
+
+            fill:true
         }]
     }
-}
-);
+})
 
+new Chart(
 
-async function abrirModal(nome){
+document.getElementById("graficoPizza"),
 
-    const resposta =
-    await fetch(`/produto/${nome}`);
+{
+    type:'doughnut',
 
-    const dados =
-    await resposta.json();
+    data:{
 
-    let html = "";
+        labels:
+        movimentacoes.map(m =>
+        m.descricao_mov),
 
-    dados.forEach(d => {
+        datasets:[{
 
-        html += `
+            data:
+            movimentacoes.map(m =>
+            m.total),
 
-        <div class="detalhe">
+            backgroundColor:[
 
-            <h2>${d.descricao_prod}</h2>
+                '#2dff88',
+                '#ff2d2d',
+                '#ffd43b'
+            ]
+        }]
+    }
+})
 
-            <p><b>Fornecedor:</b> ${d.nome_forn}</p>
+new Chart(
 
-            <p><b>Lote:</b> ${d.numero_lote}</p>
+document.getElementById("graficoProdutos"),
 
-            <p><b>Validade:</b> ${d.data_validade_lote}</p>
+{
+    type:'bar',
 
-            <p><b>Mov:</b> ${d.descricao_mov}</p>
+    data:{
 
-            <p><b>Quantidade:</b> ${d.quantidade}</p>
+        labels:
+        topProdutos.map(p =>
+        p.descricao_prod),
 
-            <p><b>Receita:</b> ${d.valor_total}</p>
+        datasets:[{
 
-            <p><b>Transportadora:</b> ${d.nome_transp}</p>
+            label:'Quantidade',
 
-            <p><b>Data:</b> ${d.data}</p>
+            data:
+            topProdutos.map(p =>
+            p.total),
 
-        </div>
+            backgroundColor:'#ff2d2d'
+        }]
+    }
+})
 
-        <hr>
-        `
-    });
+new Chart(
 
-    document
-    .getElementById("conteudoModal")
-    .innerHTML = html;
+document.getElementById("graficoFornecedor"),
 
-    document
-    .getElementById("modal")
-    .style.display = "block";
-}
+{
+    type:'bar',
 
+    data:{
 
-function fecharModal(){
+        labels:
+        fornecedores.map(f =>
+        f.nome_forn),
 
-    document
-    .getElementById("modal")
-    .style.display = "none";
-}
+        datasets:[{
+
+            label:'Movimentações',
+
+            data:
+            fornecedores.map(f =>
+            f.total),
+
+            backgroundColor:'#7a0000'
+        }]
+    }
+})
+
+new Chart(
+
+document.getElementById("graficoCategorias"),
+
+{
+    type:'polarArea',
+
+    data:{
+
+        labels:
+        categorias.map(c =>
+        c.categoria_prod),
+
+        datasets:[{
+
+            data:
+            categorias.map(c =>
+            c.total),
+
+            backgroundColor:[
+
+                '#ff2d2d',
+                '#ff6b6b',
+                '#ffd43b',
+                '#2dff88',
+                '#4dabff',
+                '#845ef7'
+            ]
+        }]
+    }
+})
 
 </script>
+
 </body>
+
 </html>

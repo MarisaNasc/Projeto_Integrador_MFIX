@@ -13,7 +13,7 @@ engine = create_engine(
 )
 
 # =========================================================
-# QUERY
+# QUERY PADRÃO
 # =========================================================
 
 def query_db(query, params={}):
@@ -67,11 +67,13 @@ def home():
             dp.categoria_prod,
             dp.procedencia_prod,
 
-            df.nome_forn,
+            COALESCE(df.nome_forn, 'Não informado')
+            AS nome_forn,
 
             tm.descricao_mov,
 
-            dt.nome_transp,
+            COALESCE(dt.nome_transp, 'Não informado')
+            AS nome_transp,
 
             dl.numero_lote,
             dl.data_validade_lote,
@@ -199,9 +201,31 @@ def home():
 
     dados = query_db(query, params)
 
+    # =====================================================
+    # KPIs HOME
+    # =====================================================
+
+    kpis = query_db("""
+
+        SELECT
+
+            COUNT(*) AS total_mov,
+
+            COUNT(DISTINCT id_fornecedor)
+            AS fornecedores,
+
+            COUNT(*) FILTER(
+                WHERE id_tipo_mov = 2
+            ) AS movimentacoes_hoje
+
+        FROM fato_movimentacao
+
+    """)
+
     return render_template(
         "index.html",
-        dados=dados
+        dados=dados,
+        kpis=kpis
     )
 
 # =========================================================
@@ -224,7 +248,7 @@ def autocomplete_produto():
 
         ORDER BY descricao_prod
 
-        LIMIT 8
+        LIMIT 10
 
     """, {
 
@@ -238,60 +262,108 @@ def autocomplete_produto():
 # DASHBOARD
 # =========================================================
 
-def consultar(query, params={}):
-    with engine.connect() as conn:
-        result = conn.execute(text(query), params)
-        df = pd.DataFrame(result.fetchall(), columns=result.keys())
-    return df.to_dict(orient="record")
-
-
 @app.route("/dashboard")
 def dashboard():
 
-    kpis = consultar("""
-    SELECT
-        COUNT(*) AS total_mov,
-        SUM(valor_total) AS receita,
-        SUM(quantidade) AS quantidade_total,
-        COUNT(DISTINCT id_produto) AS produtos
-    FROM fato_movimentacao
+    kpis = query_db("""
+
+        SELECT
+
+            COUNT(*) AS total_mov,
+
+            ROUND(
+                SUM(valor_total)::numeric,
+                2
+            ) AS receita,
+
+            COUNT(DISTINCT id_produto)
+            AS produtos
+
+        FROM fato_movimentacao
+
     """)
 
-    top_produtos = consultar("""
-    SELECT
-        p.descricao_prod,
-        SUM(fm.quantidade) AS total
+    top_produtos = query_db("""
 
-    FROM fato_movimentacao fm
+        SELECT
 
-    JOIN dim_produto p
-    ON fm.id_produto = p.id_produto
+            p.descricao_prod,
 
-    GROUP BY p.descricao_prod
+            SUM(fm.quantidade)
+            AS total
 
-    ORDER BY total DESC
-    LIMIT 5
-    """)
+        FROM fato_movimentacao fm
 
-    entrada_saida = consultar("""
-    SELECT
-        tm.descricao_mov,
-        SUM(fm.quantidade) AS total
+        JOIN dim_produto p
+        ON fm.id_produto = p.id_produto
 
-    FROM fato_movimentacao fm
+        GROUP BY p.descricao_prod
 
-    JOIN dim_tipo_mov tm
-    ON fm.id_tipo_mov = tm.id_tipo_mov
+        ORDER BY total DESC
 
-    GROUP BY tm.descricao_mov
+        LIMIT 5
+
     """)
 
     return render_template(
         "dashboard.html",
         kpis=kpis,
-        top_produtos=top_produtos,
-        entrada_saida=entrada_saida
+        top_produtos=top_produtos
     )
+
+# =========================================================
+# MODAL PRODUTO
+# =========================================================
+
+@app.route("/produto/<nome>")
+def produto(nome):
+
+    dados = query_db("""
+
+        SELECT
+
+            dp.descricao_prod,
+            df.nome_forn,
+            dl.numero_lote,
+            dl.data_validade_lote,
+            tm.descricao_mov,
+            fm.quantidade,
+            fm.valor_total,
+            dt.nome_transp,
+            fm.data
+
+        FROM fato_movimentacao fm
+
+        LEFT JOIN dim_produto dp
+        ON fm.id_produto = dp.id_produto
+
+        LEFT JOIN dim_fornecedor df
+        ON fm.id_fornecedor = df.id_fornecedor
+
+        LEFT JOIN dim_lote dl
+        ON fm.id_lote = dl.id_lote
+
+        LEFT JOIN dim_tipo_mov tm
+        ON fm.id_tipo_mov = tm.id_tipo_mov
+
+        LEFT JOIN dim_transportadora dt
+        ON fm.id_transp = dt.id_transp
+
+        WHERE LOWER(dp.descricao_prod)
+        = LOWER(:nome)
+
+        ORDER BY fm.data DESC
+
+        LIMIT 10
+
+    """, {
+
+        "nome": nome
+
+    })
+
+    return jsonify(dados)
+
 # =========================================================
 # START
 # =========================================================

@@ -24,13 +24,15 @@
 
 <body>
 
-<!-- =====================================================
-HEADER
-===================================================== -->
+<div class="container">
 
 <header class="topbar">
 
     <div class="titulo-area">
+
+        <span class="mini-title">
+            • MFIX · OPERAÇÕES
+        </span>
 
         <h1>
 
@@ -41,13 +43,13 @@ HEADER
 
         <p>
 
-            Central de monitoramento e inteligência logística
+            Consolidação de movimentações, fornecedores e estoque em tempo real.
 
         </p>
 
     </div>
 
-    <a href="/dashboard">
+    <a href="/dashboard" class="dashboard-btn">
 
         DASHBOARD BI
 
@@ -55,9 +57,37 @@ HEADER
 
 </header>
 
-<!-- =====================================================
-FILTROS
-===================================================== -->
+<!-- KPI -->
+
+<div class="mini-kpis">
+
+    <div class="mini-card">
+
+        <span>ITENS EM ESTOQUE</span>
+
+        <h2>{{ kpis[0].total_mov }}</h2>
+
+    </div>
+
+    <div class="mini-card">
+
+        <span>MOVIMENTAÇÕES HOJE</span>
+
+        <h2>{{ kpis[0].movimentacoes_hoje }}</h2>
+
+    </div>
+
+    <div class="mini-card">
+
+        <span>FORNECEDORES ATIVOS</span>
+
+        <h2>{{ kpis[0].fornecedores }}</h2>
+
+    </div>
+
+</div>
+
+<!-- FILTROS -->
 
 <form method="POST" class="filtros">
 
@@ -122,9 +152,15 @@ FILTROS
 
 </form>
 
-<!-- =====================================================
-CARDS
-===================================================== -->
+<div class="resultado-topo">
+
+    <h2>RESULTADOS</h2>
+
+    <span>
+        {{ dados|length }} registros
+    </span>
+
+</div>
 
 <div class="grid-cards">
 
@@ -132,9 +168,11 @@ CARDS
 
 <div class="card">
 
-    <div class="card-top">
+    <div class="card-header">
 
-        <div class="status
+        <div class="
+        status
+
         {% if item.descricao_mov == 'ENTRADA' %}
         entrada
         {% elif item.descricao_mov == 'SAÍDA' %}
@@ -150,85 +188,57 @@ CARDS
 
     </div>
 
-    <h2>
+    <h3>
 
         {{ item.descricao_prod }}
 
-    </h2>
+    </h3>
 
     <div class="linha"></div>
 
-    <div class="info">
+    <div class="card-grid">
 
-        <p>
+        <div>
 
-            <strong>Fornecedor</strong>
-            {{ item.nome_forn }}
+            <span>FORNECEDOR</span>
+            <p>{{ item.nome_forn }}</p>
 
-        </p>
+        </div>
 
-        <p>
+        <div>
 
-            <strong>Quantidade</strong>
-            {{ item.quantidade }}
+            <span>QUANTIDADE</span>
+            <p>{{ item.quantidade }}</p>
 
-        </p>
+        </div>
 
-        <p>
+        <div>
 
-            <strong>Valor</strong>
-            R$ {{ item.valor_total }}
+            <span>LOTE</span>
+            <p>{{ item.numero_lote }}</p>
 
-        </p>
+        </div>
 
-        <p>
+        <div>
 
-            <strong>Categoria</strong>
-            {{ item.categoria_prod }}
+            <span>DATA</span>
+            <p>{{ item.data }}</p>
 
-        </p>
+        </div>
 
-        <p>
+        <div>
 
-            <strong>Procedência</strong>
-            {{ item.procedencia_prod }}
+            <span>CATEGORIA</span>
+            <p>{{ item.categoria_prod }}</p>
 
-        </p>
+        </div>
 
-        <p>
+        <div>
 
-            <strong>Lote</strong>
-            {{ item.numero_lote }}
+            <span>VALOR</span>
+            <p>R$ {{ item.valor_total }}</p>
 
-        </p>
-
-        <p>
-
-            <strong>Validade</strong>
-            {{ item.data_validade_lote }}
-
-        </p>
-
-        <p>
-
-            <strong>Transportadora</strong>
-            {{ item.nome_transp }}
-
-        </p>
-
-        <p>
-
-            <strong>Data</strong>
-            {{ item.data }}
-
-        </p>
-
-        <p>
-
-            <strong>Maior venda</strong>
-            {{ item.melhor_venda }}
-
-        </p>
+        </div>
 
     </div>
 
@@ -238,9 +248,7 @@ CARDS
 
 </div>
 
-<!-- =====================================================
-SCRIPT AUTOCOMPLETE
-===================================================== -->
+</div>
 
 <script>
 
