@@ -519,3 +519,233 @@ body{
         font-size:42px;
     }
 }
+
+
+/* =====================================================
+DASHBOARD BI
+===================================================== */
+
+.bi-dashboard-body{
+
+    background:
+    linear-gradient(
+        180deg,
+        #05070d 0%,
+        #080b12 100%
+    );
+
+    min-height:100vh;
+
+    color:white;
+
+    font-family:
+    "Segoe UI",
+    sans-serif;
+}
+
+.bi-container{
+
+    width:95%;
+
+    margin:auto;
+
+    padding-top:25px;
+}
+
+/* HEADER */
+
+.bi-dashboard-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    padding-bottom:35px;
+
+    border-bottom:
+    1px solid rgba(255,255,255,0.08);
+}
+
+.bi-dashboard-title small{
+
+    color:#8b8b8b;
+
+    letter-spacing:3px;
+
+    font-size:11px;
+}
+
+.bi-dashboard-title h1{
+
+    margin-top:12px;
+
+    font-size:58px;
+
+    font-weight:900;
+
+    text-transform:uppercase;
+}
+
+.bi-dashboard-title h1 span{
+
+    color:#ff2d2d;
+}
+
+.bi-dashboard-title p{
+
+    margin-top:14px;
+
+    color:#8d96a5;
+}
+
+.bi-dashboard-link{
+
+    background:
+    linear-gradient(
+        180deg,
+        #ff2d2d,
+        #c10000
+    );
+
+    padding:16px 24px;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    color:white;
+
+    font-weight:700;
+}
+
+/* KPIS */
+
+.bi-kpi-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(4,1fr);
+
+    gap:20px;
+
+    margin-top:30px;
+}
+
+.bi-kpi-card{
+
+    background:
+    linear-gradient(
+        180deg,
+        #111827,
+        #0b1320
+    );
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    border-radius:18px;
+
+    padding:28px;
+}
+
+.bi-kpi-card span{
+
+    color:#8d96a5;
+
+    font-size:12px;
+
+    letter-spacing:2px;
+}
+
+.bi-kpi-card h2{
+
+    margin-top:18px;
+
+    font-size:40px;
+}
+
+/* CHARTS */
+
+.bi-chart-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(2,1fr);
+
+    gap:22px;
+
+    margin-top:30px;
+
+    padding-bottom:50px;
+}
+
+.bi-chart-card{
+
+    background:
+    linear-gradient(
+        180deg,
+        #111827,
+        #0b1320
+    );
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    border-radius:18px;
+
+    padding:28px;
+}
+
+.bi-chart-card h3{
+
+    margin-bottom:22px;
+
+    font-size:22px;
+}
+
+.bi-chart-card canvas{
+
+    width:100% !important;
+
+    height:320px !important;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:1300px){
+
+    .bi-kpi-grid{
+
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .bi-chart-grid{
+
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:780px){
+
+    .bi-dashboard-header{
+
+        flex-direction:column;
+
+        gap:20px;
+    }
+
+    .bi-dashboard-title h1{
+
+        font-size:40px;
+    }
+
+    .bi-kpi-grid{
+
+        grid-template-columns:1fr;
+    }
+}

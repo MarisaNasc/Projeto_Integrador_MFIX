@@ -1,353 +1,392 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
->
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+    >
 
-<title>
+    <title>
+        Dashboard BI
+    </title>
 
-Dashboard BI
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<link
-rel="stylesheet"
-href="/static/style.css"
->
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+    >
 
 </head>
 
-<body>
+<body class="bi-dashboard-body">
 
-<div class="dashboard-container">
+<div class="bi-container">
 
-<div class="topo-dashboard">
+    <!-- =====================================================
+    HEADER
+    ===================================================== -->
 
-    <div>
+    <header class="bi-dashboard-header">
 
-        <span class="mini-title">
+        <div class="bi-dashboard-title">
 
-            • MFIX · BUSINESS INTELLIGENCE
+            <small>
+                BUSINESS INTELLIGENCE
+            </small>
 
-        </span>
+            <h1>
 
-        <h1>
+                DASHBOARD
+                <span>MFIX</span>
 
-            DASHBOARD BI
+            </h1>
 
-        </h1>
+            <p>
 
-    </div>
+                Central estratégica de análise logística e operacional
 
-    <a href="/">
+            </p>
 
-        INTERFACE DW
+        </div>
 
-    </a>
+        <a
+        href="/"
+        class="bi-dashboard-link"
+        >
+
+            INTERFACE DW
+
+        </a>
+
+    </header>
+
+    <!-- =====================================================
+    KPIS
+    ===================================================== -->
+
+    <section class="bi-kpi-grid">
+
+        <div class="bi-kpi-card">
+
+            <span>
+                MOVIMENTAÇÕES
+            </span>
+
+            <h2>
+                {{ kpis[0].total_mov }}
+            </h2>
+
+        </div>
+
+        <div class="bi-kpi-card">
+
+            <span>
+                RECEITA TOTAL
+            </span>
+
+            <h2>
+                R$ {{ kpis[0].receita }}
+            </h2>
+
+        </div>
+
+        <div class="bi-kpi-card">
+
+            <span>
+                PRODUTOS
+            </span>
+
+            <h2>
+                {{ kpis[0].produtos }}
+            </h2>
+
+        </div>
+
+        <div class="bi-kpi-card">
+
+            <span>
+                ENTRADAS
+            </span>
+
+            <h2>
+                {{ entradas[0].total }}
+            </h2>
+
+        </div>
+
+        <div class="bi-kpi-card">
+
+            <span>
+                SAÍDAS
+            </span>
+
+            <h2>
+                {{ saidas[0].total }}
+            </h2>
+
+        </div>
+
+        <div class="bi-kpi-card">
+
+            <span>
+                AJUSTES
+            </span>
+
+            <h2>
+                {{ ajustes[0].total }}
+            </h2>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+    GRÁFICOS
+    ===================================================== -->
+
+    <section class="bi-chart-grid">
+
+        <!-- FINANCEIRO -->
+
+        <div class="bi-chart-card">
+
+            <h3>
+                Evolução Financeira
+            </h3>
+
+            <canvas id="financeiroChart"></canvas>
+
+        </div>
+
+        <!-- MOVIMENTAÇÕES -->
+
+        <div class="bi-chart-card">
+
+            <h3>
+                Movimentações
+            </h3>
+
+            <canvas id="movChart"></canvas>
+
+        </div>
+
+        <!-- TOP PRODUTOS -->
+
+        <div class="bi-chart-card">
+
+            <h3>
+                Top Produtos
+            </h3>
+
+            <canvas id="produtosChart"></canvas>
+
+        </div>
+
+        <!-- FORNECEDORES -->
+
+        <div class="bi-chart-card">
+
+            <h3>
+                Top Fornecedores
+            </h3>
+
+            <canvas id="fornecedorChart"></canvas>
+
+        </div>
+
+    </section>
 
 </div>
 
-<!-- KPI -->
-
-<div class="kpis-grid">
-
-    <div class="kpi-card">
-        <span>RECEITA TOTAL</span>
-        <h2>R$ {{ kpis[0].receita }}</h2>
-    </div>
-
-    <div class="kpi-card">
-        <span>MOVIMENTAÇÕES</span>
-        <h2>{{ kpis[0].total_mov }}</h2>
-    </div>
-
-    <div class="kpi-card">
-        <span>PRODUTOS</span>
-        <h2>{{ kpis[0].produtos }}</h2>
-    </div>
-
-    <div class="kpi-card">
-        <span>FORNECEDORES</span>
-        <h2>{{ kpis[0].fornecedores }}</h2>
-    </div>
-
-    <div class="kpi-card">
-        <span>TICKET MÉDIO</span>
-        <h2>R$ {{ kpis[0].ticket_medio }}</h2>
-    </div>
-
-    <div class="kpi-card">
-        <span>QUANTIDADE</span>
-        <h2>{{ kpis[0].quantidade_total }}</h2>
-    </div>
-
-</div>
-
-<!-- GRÁFICOS -->
-
-<div class="dashboard-grid">
-
-    <div class="grafico-card grande">
-
-        <h3>
-
-            Evolução Financeira
-
-        </h3>
-
-        <canvas id="graficoLinha"></canvas>
-
-    </div>
-
-    <div class="grafico-card">
-
-        <h3>
-
-            Entrada x Saída x Ajuste
-
-        </h3>
-
-        <canvas id="graficoPizza"></canvas>
-
-    </div>
-
-    <div class="grafico-card">
-
-        <h3>
-
-            Top Produtos
-
-        </h3>
-
-        <canvas id="graficoProdutos"></canvas>
-
-    </div>
-
-    <div class="grafico-card">
-
-        <h3>
-
-            Top Fornecedores
-
-        </h3>
-
-        <canvas id="graficoFornecedor"></canvas>
-
-    </div>
-
-    <div class="grafico-card">
-
-        <h3>
-
-            Categorias
-
-        </h3>
-
-        <canvas id="graficoCategorias"></canvas>
-
-    </div>
-
-</div>
-
-<!-- INSIGHT -->
-
-<div class="insight-card">
-
-    <span>
-
-        PRODUTO CAMPEÃO
-
-    </span>
-
-    <h2>
-
-        {{ produto_campeao[0].descricao_prod }}
-
-    </h2>
-
-    <p>
-
-        {{ produto_campeao[0].total }}
-        movimentações registradas
-
-    </p>
-
-</div>
-
-</div>
+<!-- =====================================================
+SCRIPTS
+===================================================== -->
 
 <script>
 
-const topProdutos =
-{{ top_produtos|tojson }}
+const financeiro =
+{{ financeiro|tojson }};
 
 const movimentacoes =
-{{ movimentacoes|tojson }}
+{{ movimentacoes|tojson }};
 
-const evolucao =
-{{ evolucao|tojson }}
+const produtos =
+{{ top_produtos|tojson }};
 
 const fornecedores =
-{{ fornecedores|tojson }}
+{{ fornecedores|tojson }};
 
-const categorias =
-{{ categorias|tojson }}
 
-new Chart(
 
-document.getElementById("graficoLinha"),
-
-{
-    type:'line',
-
-    data:{
-
-        labels:
-        evolucao.map(e => e.mes),
-
-        datasets:[{
-
-            label:'Receita',
-
-            data:
-            evolucao.map(e => e.total),
-
-            borderColor:'#ff2d2d',
-
-            backgroundColor:
-            'rgba(255,45,45,0.1)',
-
-            tension:0.4,
-
-            fill:true
-        }]
-    }
-})
+// =====================================================
+// EVOLUÇÃO FINANCEIRA
+// =====================================================
 
 new Chart(
 
-document.getElementById("graficoPizza"),
+    document.getElementById(
+        'financeiroChart'
+    ),
 
-{
-    type:'doughnut',
+    {
 
-    data:{
+        type:'line',
 
-        labels:
-        movimentacoes.map(m =>
-        m.descricao_mov),
+        data:{
 
-        datasets:[{
+            labels:
+            financeiro.map(
+                item => item.data
+            ),
 
-            data:
-            movimentacoes.map(m =>
-            m.total),
+            datasets:[{
 
-            backgroundColor:[
+                label:'Receita',
 
-                '#2dff88',
-                '#ff2d2d',
-                '#ffd43b'
-            ]
-        }]
+                data:
+                financeiro.map(
+                    item => item.valor
+                ),
+
+                borderColor:'#ff2d2d',
+
+                backgroundColor:
+                'rgba(255,45,45,0.15)',
+
+                tension:0.4,
+
+                fill:true
+            }]
+        }
     }
-})
+)
+
+
+// =====================================================
+// MOVIMENTAÇÕES
+// =====================================================
 
 new Chart(
 
-document.getElementById("graficoProdutos"),
+    document.getElementById(
+        'movChart'
+    ),
 
-{
-    type:'bar',
+    {
 
-    data:{
+        type:'doughnut',
 
-        labels:
-        topProdutos.map(p =>
-        p.descricao_prod),
+        data:{
 
-        datasets:[{
+            labels:
+            movimentacoes.map(
+                item => item.descricao_mov
+            ),
 
-            label:'Quantidade',
+            datasets:[{
 
-            data:
-            topProdutos.map(p =>
-            p.total),
+                data:
+                movimentacoes.map(
+                    item => item.total
+                ),
 
-            backgroundColor:'#ff2d2d'
-        }]
+                backgroundColor:[
+
+                    '#37ff9c',
+                    '#ff4d4d',
+                    '#ffd84f'
+                ]
+            }]
+        }
     }
-})
+)
+
+
+// =====================================================
+// TOP PRODUTOS
+// =====================================================
 
 new Chart(
 
-document.getElementById("graficoFornecedor"),
+    document.getElementById(
+        'produtosChart'
+    ),
 
-{
-    type:'bar',
+    {
 
-    data:{
+        type:'bar',
 
-        labels:
-        fornecedores.map(f =>
-        f.nome_forn),
+        data:{
 
-        datasets:[{
+            labels:
+            produtos.map(
+                item => item.descricao_prod
+            ),
 
-            label:'Movimentações',
+            datasets:[{
 
-            data:
-            fornecedores.map(f =>
-            f.total),
+                label:'Quantidade',
 
-            backgroundColor:'#7a0000'
-        }]
+                data:
+                produtos.map(
+                    item => item.total
+                ),
+
+                backgroundColor:'#ff2d2d'
+            }]
+        }
     }
-})
+)
+
+
+// =====================================================
+// FORNECEDORES
+// =====================================================
 
 new Chart(
 
-document.getElementById("graficoCategorias"),
+    document.getElementById(
+        'fornecedorChart'
+    ),
 
-{
-    type:'polarArea',
+    {
 
-    data:{
+        type:'bar',
 
-        labels:
-        categorias.map(c =>
-        c.categoria_prod),
+        data:{
 
-        datasets:[{
+            labels:
+            fornecedores.map(
+                item => item.nome_forn
+            ),
 
-            data:
-            categorias.map(c =>
-            c.total),
+            datasets:[{
 
-            backgroundColor:[
+                label:'Movimentações',
 
-                '#ff2d2d',
-                '#ff6b6b',
-                '#ffd43b',
-                '#2dff88',
-                '#4dabff',
-                '#845ef7'
-            ]
-        }]
+                data:
+                fornecedores.map(
+                    item => item.total
+                ),
+
+                backgroundColor:'#4f8cff'
+            }]
+        },
+
+        options:{
+
+            indexAxis:'y'
+        }
     }
-})
+)
 
 </script>
 
 </body>
-
 </html>
+```
