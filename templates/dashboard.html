@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -6,76 +7,62 @@
     <meta charset="UTF-8">
 
     <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Dashboard BI
-    </title>
+    <title>Dashboard BI</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}"
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
     >
 
 </head>
 
 <body class="bi-dashboard-body">
 
-<div class="bi-container">
+<div class="bi-wrapper">
 
-    <!-- =====================================================
-    HEADER
-    ===================================================== -->
+    <!-- HEADER -->
 
-    <header class="bi-dashboard-header">
+    <div class="bi-header">
 
-        <div class="bi-dashboard-title">
+        <div>
 
             <small>
-                BUSINESS INTELLIGENCE
+                MFIX • BUSINESS INTELLIGENCE
             </small>
 
             <h1>
-
                 DASHBOARD
                 <span>MFIX</span>
-
             </h1>
 
             <p>
-
-                Central estratégica de análise logística e operacional
-
+                Central analítica operacional
             </p>
 
         </div>
 
         <a
-        href="/"
-        class="bi-dashboard-link"
+            href="/"
+            class="bi-btn"
         >
-
             INTERFACE DW
-
         </a>
 
-    </header>
+    </div>
 
-    <!-- =====================================================
-    KPIS
-    ===================================================== -->
+    <!-- KPIS -->
 
-    <section class="bi-kpi-grid">
+    <div class="bi-kpis">
 
         <div class="bi-kpi-card">
 
-            <span>
-                MOVIMENTAÇÕES
-            </span>
+            <span>MOVIMENTAÇÕES</span>
 
             <h2>
                 {{ kpis[0].total_mov }}
@@ -83,23 +70,28 @@
 
         </div>
 
-        <div class="bi-kpi-card">
+        <div class="bi-kpi-card receita-card">
 
-            <span>
-                RECEITA TOTAL
-            </span>
+            <span>RECEITA TOTAL</span>
 
             <h2>
-                R$ {{ kpis[0].receita }}
+
+                R$
+                {{
+                    "{:,.2f}".format(
+                        kpis[0].receita
+                    ).replace(",", "X")
+                    .replace(".", ",")
+                    .replace("X", ".")
+                }}
+
             </h2>
 
         </div>
 
         <div class="bi-kpi-card">
 
-            <span>
-                PRODUTOS
-            </span>
+            <span>PRODUTOS</span>
 
             <h2>
                 {{ kpis[0].produtos }}
@@ -109,128 +101,196 @@
 
         <div class="bi-kpi-card">
 
-            <span>
-                ENTRADAS
-            </span>
+            <span>FORNECEDORES</span>
 
             <h2>
-                {{ entradas[0].total }}
+                {{ fornecedores[0].fornecedores }}
             </h2>
 
         </div>
 
-        <div class="bi-kpi-card">
+        <div class="bi-kpi-card entrada-card">
 
-            <span>
-                SAÍDAS
-            </span>
+            <span>ENTRADAS</span>
 
             <h2>
-                {{ saidas[0].total }}
+                {{ entradas[0].entradas }}
             </h2>
 
         </div>
 
-        <div class="bi-kpi-card">
+        <div class="bi-kpi-card saida-card">
 
-            <span>
-                AJUSTES
-            </span>
+            <span>SAÍDAS</span>
 
             <h2>
-                {{ ajustes[0].total }}
+                {{ saidas[0].saidas }}
             </h2>
 
         </div>
 
-    </section>
+        <div class="bi-kpi-card ajuste-card">
 
-    <!-- =====================================================
-    GRÁFICOS
-    ===================================================== -->
+            <span>AJUSTES</span>
 
-    <section class="bi-chart-grid">
-
-        <!-- FINANCEIRO -->
-
-        <div class="bi-chart-card">
-
-            <h3>
-                Evolução Financeira
-            </h3>
-
-            <canvas id="financeiroChart"></canvas>
+            <h2>
+                {{ ajustes[0].ajustes }}
+            </h2>
 
         </div>
 
-        <!-- MOVIMENTAÇÕES -->
+    </div>
 
-        <div class="bi-chart-card">
+    <!-- GRID -->
 
-            <h3>
-                Movimentações
-            </h3>
+    <div class="bi-grid">
 
-            <canvas id="movChart"></canvas>
+        <!-- ESQUERDA -->
+
+        <div class="bi-left">
+
+            <!-- FINANCEIRO -->
+
+            <div class="bi-chart-card big-card">
+
+                <div class="chart-top">
+
+                    <div>
+
+                        <h3>
+                            Evolução Financeira
+                        </h3>
+
+                        <p>
+                            Receita operacional
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="canvas-box">
+
+                    <canvas id="graficoFinanceiro"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- PRODUTOS -->
+
+            <div class="bi-chart-card">
+
+                <div class="chart-top">
+
+                    <div>
+
+                        <h3>
+                            Top Produtos
+                        </h3>
+
+                    </div>
+
+                </div>
+
+                <div class="canvas-box">
+
+                    <canvas id="graficoProdutos"></canvas>
+
+                </div>
+
+            </div>
 
         </div>
 
-        <!-- TOP PRODUTOS -->
+        <!-- DIREITA -->
 
-        <div class="bi-chart-card">
+        <div class="bi-right">
 
-            <h3>
-                Top Produtos
-            </h3>
+            <!-- DONUT -->
 
-            <canvas id="produtosChart"></canvas>
+            <div class="bi-chart-card">
+
+                <div class="chart-top">
+
+                    <div>
+
+                        <h3>
+                            Movimentações
+                        </h3>
+
+                    </div>
+
+                </div>
+
+                <div class="donut-box">
+
+                    <canvas id="graficoMov"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- RANKING -->
+
+            <div class="bi-chart-card">
+
+                <div class="chart-top">
+
+                    <div>
+
+                        <h3>
+                            Ranking Produtos
+                        </h3>
+
+                    </div>
+
+                </div>
+
+                <div class="ranking-list">
+
+                    {% for p in top_produtos %}
+
+                    <div class="ranking-item">
+
+                        <strong>
+
+                            {{ p.descricao_prod }}
+
+                        </strong>
+
+                        <span>
+
+                            {{ p.total }}
+
+                        </span>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
 
         </div>
 
-        <!-- FORNECEDORES -->
-
-        <div class="bi-chart-card">
-
-            <h3>
-                Top Fornecedores
-            </h3>
-
-            <canvas id="fornecedorChart"></canvas>
-
-        </div>
-
-    </section>
+    </div>
 
 </div>
-
-<!-- =====================================================
-SCRIPTS
-===================================================== -->
 
 <script>
 
 const financeiro =
-{{ financeiro|tojson }};
-
-const movimentacoes =
-{{ movimentacoes|tojson }};
+{{ financeiro | tojson | safe }};
 
 const produtos =
-{{ top_produtos|tojson }};
-
-const fornecedores =
-{{ fornecedores|tojson }};
-
-
-
-// =====================================================
-// EVOLUÇÃO FINANCEIRA
-// =====================================================
+{{ top_produtos | tojson | safe }};
 
 new Chart(
 
     document.getElementById(
-        'financeiroChart'
+        'graficoFinanceiro'
     ),
 
     {
@@ -241,7 +301,7 @@ new Chart(
 
             labels:
             financeiro.map(
-                item => item.data
+                i => i.data
             ),
 
             datasets:[{
@@ -250,7 +310,7 @@ new Chart(
 
                 data:
                 financeiro.map(
-                    item => item.valor
+                    i => i.total
                 ),
 
                 borderColor:'#ff2d2d',
@@ -258,63 +318,25 @@ new Chart(
                 backgroundColor:
                 'rgba(255,45,45,0.15)',
 
-                tension:0.4,
+                fill:true,
 
-                fill:true
+                tension:0.4
             }]
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false
         }
     }
-)
-
-
-// =====================================================
-// MOVIMENTAÇÕES
-// =====================================================
+);
 
 new Chart(
 
     document.getElementById(
-        'movChart'
-    ),
-
-    {
-
-        type:'doughnut',
-
-        data:{
-
-            labels:
-            movimentacoes.map(
-                item => item.descricao_mov
-            ),
-
-            datasets:[{
-
-                data:
-                movimentacoes.map(
-                    item => item.total
-                ),
-
-                backgroundColor:[
-
-                    '#37ff9c',
-                    '#ff4d4d',
-                    '#ffd84f'
-                ]
-            }]
-        }
-    }
-)
-
-
-// =====================================================
-// TOP PRODUTOS
-// =====================================================
-
-new Chart(
-
-    document.getElementById(
-        'produtosChart'
+        'graficoProdutos'
     ),
 
     {
@@ -325,68 +347,89 @@ new Chart(
 
             labels:
             produtos.map(
-                item => item.descricao_prod
+                p => p.descricao_prod
             ),
 
             datasets:[{
-
-                label:'Quantidade',
 
                 data:
                 produtos.map(
-                    item => item.total
+                    p => p.total
                 ),
 
-                backgroundColor:'#ff2d2d'
-            }]
-        }
-    }
-)
+                backgroundColor:'#ff2d2d',
 
-
-// =====================================================
-// FORNECEDORES
-// =====================================================
-
-new Chart(
-
-    document.getElementById(
-        'fornecedorChart'
-    ),
-
-    {
-
-        type:'bar',
-
-        data:{
-
-            labels:
-            fornecedores.map(
-                item => item.nome_forn
-            ),
-
-            datasets:[{
-
-                label:'Movimentações',
-
-                data:
-                fornecedores.map(
-                    item => item.total
-                ),
-
-                backgroundColor:'#4f8cff'
+                borderRadius:8
             }]
         },
 
         options:{
 
-            indexAxis:'y'
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+                legend:{
+                    display:false
+                }
+            }
         }
     }
-)
+);
+
+new Chart(
+
+    document.getElementById(
+        'graficoMov'
+    ),
+
+    {
+
+        type:'doughnut',
+
+        data:{
+
+            labels:[
+                'Entradas',
+                'Saídas',
+                'Ajustes'
+            ],
+
+            datasets:[{
+
+                data:[
+
+                    {{ entradas[0].entradas }},
+                    {{ saidas[0].saidas }},
+                    {{ ajustes[0].ajustes }}
+
+                ],
+
+                backgroundColor:[
+
+                    '#37ff9c',
+                    '#ff4d4d',
+                    '#ffd84f'
+                ],
+
+                borderWidth:0
+            }]
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            cutout:'70%'
+        }
+    }
+);
 
 </script>
 
 </body>
 </html>
-```
+

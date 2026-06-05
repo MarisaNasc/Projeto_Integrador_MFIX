@@ -265,9 +265,9 @@ def autocomplete_produto():
 @app.route("/dashboard")
 def dashboard():
 
-    # =====================================================
+    # ==========================================
     # KPIS PRINCIPAIS
-    # =====================================================
+    # ==========================================
 
     kpis = query_db("""
 
@@ -287,15 +287,30 @@ def dashboard():
 
     """)
 
-    # =====================================================
+    # ==========================================
+    # FORNECEDORES
+    # ==========================================
+
+    fornecedores = query_db("""
+
+        SELECT
+
+            COUNT(DISTINCT id_fornecedor)
+            AS fornecedores
+
+        FROM fato_movimentacao
+
+    """)
+
+    # ==========================================
     # ENTRADAS
-    # =====================================================
+    # ==========================================
 
     entradas = query_db("""
 
         SELECT
 
-            COUNT(*) AS total
+            COUNT(*) AS entradas
 
         FROM fato_movimentacao
 
@@ -303,15 +318,15 @@ def dashboard():
 
     """)
 
-    # =====================================================
+    # ==========================================
     # SAÍDAS
-    # =====================================================
+    # ==========================================
 
     saidas = query_db("""
 
         SELECT
 
-            COUNT(*) AS total
+            COUNT(*) AS saidas
 
         FROM fato_movimentacao
 
@@ -319,15 +334,15 @@ def dashboard():
 
     """)
 
-    # =====================================================
+    # ==========================================
     # AJUSTES
-    # =====================================================
+    # ==========================================
 
     ajustes = query_db("""
 
         SELECT
 
-            COUNT(*) AS total
+            COUNT(*) AS ajustes
 
         FROM fato_movimentacao
 
@@ -335,9 +350,26 @@ def dashboard():
 
     """)
 
-    # =====================================================
+    # ==========================================
+    # TICKET MÉDIO
+    # ==========================================
+
+    ticket_medio = query_db("""
+
+        SELECT
+
+            ROUND(
+                AVG(valor_total)::numeric,
+                2
+            ) AS ticket
+
+        FROM fato_movimentacao
+
+    """)
+
+    # ==========================================
     # TOP PRODUTOS
-    # =====================================================
+    # ==========================================
 
     top_produtos = query_db("""
 
@@ -361,58 +393,9 @@ def dashboard():
 
     """)
 
-    # =====================================================
-    # TOP FORNECEDORES
-    # =====================================================
-
-    fornecedores = query_db("""
-
-        SELECT
-
-            COALESCE(
-                df.nome_forn,
-                'Não informado'
-            ) AS nome_forn,
-
-            COUNT(*) AS total
-
-        FROM fato_movimentacao fm
-
-        LEFT JOIN dim_fornecedor df
-        ON fm.id_fornecedor = df.id_fornecedor
-
-        GROUP BY df.nome_forn
-
-        ORDER BY total DESC
-
-        LIMIT 5
-
-    """)
-
-    # =====================================================
-    # MOVIMENTAÇÕES
-    # =====================================================
-
-    movimentacoes = query_db("""
-
-        SELECT
-
-            tm.descricao_mov,
-
-            COUNT(*) AS total
-
-        FROM fato_movimentacao fm
-
-        JOIN dim_tipo_mov tm
-        ON fm.id_tipo_mov = tm.id_tipo_mov
-
-        GROUP BY tm.descricao_mov
-
-    """)
-
-    # =====================================================
-    # EVOLUÇÃO FINANCEIRA
-    # =====================================================
+    # ==========================================
+    # FINANCEIRO
+    # ==========================================
 
     financeiro = query_db("""
 
@@ -426,7 +409,7 @@ def dashboard():
             ROUND(
                 SUM(valor_total)::numeric,
                 2
-            ) AS valor
+            ) AS total
 
         FROM fato_movimentacao
 
@@ -444,17 +427,17 @@ def dashboard():
 
         kpis=kpis,
 
+        fornecedores=fornecedores,
+
         entradas=entradas,
 
         saidas=saidas,
 
         ajustes=ajustes,
 
+        ticket_medio=ticket_medio,
+
         top_produtos=top_produtos,
-
-        fornecedores=fornecedores,
-
-        movimentacoes=movimentacoes,
 
         financeiro=financeiro
     )

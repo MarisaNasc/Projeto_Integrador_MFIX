@@ -519,233 +519,283 @@ body{
         font-size:42px;
     }
 }
-
-
-/* =====================================================
-DASHBOARD BI
-===================================================== */
+/* =========================================================
+   DASHBOARD BI FINAL
+========================================================= */
 
 .bi-dashboard-body{
-
-    background:
-    linear-gradient(
-        180deg,
-        #05070d 0%,
-        #080b12 100%
-    );
-
+    background:linear-gradient(180deg,#05070d 0%,#080b12 100%);
     min-height:100vh;
-
     color:white;
-
-    font-family:
-    "Segoe UI",
-    sans-serif;
+    font-family:"Segoe UI",sans-serif;
 }
 
-.bi-container{
-
-    width:95%;
-
+.bi-wrapper{
+    width:92%;
+    max-width:1600px;
     margin:auto;
-
-    padding-top:25px;
+    padding:28px 0 60px 0;
 }
 
 /* HEADER */
 
-.bi-dashboard-header{
-
+.bi-header{
     display:flex;
-
     justify-content:space-between;
-
     align-items:flex-start;
+    gap:20px;
 
-    padding-bottom:35px;
+    padding-bottom:30px;
+    margin-bottom:30px;
 
-    border-bottom:
-    1px solid rgba(255,255,255,0.08);
+    border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
-.bi-dashboard-title small{
-
-    color:#8b8b8b;
-
+.bi-header small{
+    color:#7f8899;
     letter-spacing:3px;
-
     font-size:11px;
 }
 
-.bi-dashboard-title h1{
-
-    margin-top:12px;
-
+.bi-header h1{
+    margin-top:10px;
     font-size:58px;
-
     font-weight:900;
-
-    text-transform:uppercase;
+    line-height:1;
 }
 
-.bi-dashboard-title h1 span{
-
+.bi-header h1 span{
     color:#ff2d2d;
 }
 
-.bi-dashboard-title p{
-
+.bi-header p{
     margin-top:14px;
-
-    color:#8d96a5;
+    color:#9aa4b5;
 }
 
-.bi-dashboard-link{
-
-    background:
-    linear-gradient(
-        180deg,
-        #ff2d2d,
-        #c10000
-    );
-
-    padding:16px 24px;
-
-    border-radius:12px;
-
-    text-decoration:none;
-
+.bi-btn{
+    background:linear-gradient(180deg,#ff2d2d,#c10000);
     color:white;
-
+    text-decoration:none;
+    padding:15px 24px;
+    border-radius:14px;
     font-weight:700;
+    transition:.25s;
 }
 
-/* KPIS */
+.bi-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 30px rgba(255,45,45,.25);
+}
 
-.bi-kpi-grid{
+/* KPI */
 
+.bi-kpis{
     display:grid;
-
-    grid-template-columns:
-    repeat(4,1fr);
-
-    gap:20px;
-
-    margin-top:30px;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:28px;
 }
 
 .bi-kpi-card{
+    background:linear-gradient(180deg,#101826,#0b1320);
 
-    background:
-    linear-gradient(
-        180deg,
-        #111827,
-        #0b1320
-    );
+    border:1px solid rgba(255,255,255,0.05);
 
-    border:
-    1px solid rgba(255,255,255,0.06);
+    border-radius:20px;
 
-    border-radius:18px;
+    padding:24px;
 
-    padding:28px;
+    min-height:140px;
+
+    transition:.25s;
+}
+
+.bi-kpi-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(255,255,255,0.10);
 }
 
 .bi-kpi-card span{
-
-    color:#8d96a5;
-
-    font-size:12px;
-
-    letter-spacing:2px;
+    color:#7f8899;
+    font-size:11px;
+    letter-spacing:3px;
 }
 
 .bi-kpi-card h2{
-
     margin-top:18px;
-
     font-size:40px;
+    font-weight:800;
+    line-height:1.1;
+
+    word-break:break-word;
 }
 
-/* CHARTS */
+/* CORES */
 
-.bi-chart-grid{
+.entrada-card{
+    border-left:4px solid #37ff9c;
+}
 
+.saida-card{
+    border-left:4px solid #ff5252;
+}
+
+.ajuste-card{
+    border-left:4px solid #ffd84f;
+}
+
+/* GRID PRINCIPAL */
+
+.bi-grid{
     display:grid;
-
-    grid-template-columns:
-    repeat(2,1fr);
-
+    grid-template-columns:2fr 1fr;
     gap:22px;
-
-    margin-top:30px;
-
-    padding-bottom:50px;
 }
+
+.bi-left,
+.bi-right{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+}
+
+/* CARDS */
 
 .bi-chart-card{
+    background:linear-gradient(180deg,#101826,#0b1320);
 
-    background:
-    linear-gradient(
-        180deg,
-        #111827,
-        #0b1320
-    );
+    border:1px solid rgba(255,255,255,0.05);
 
-    border:
-    1px solid rgba(255,255,255,0.06);
+    border-radius:22px;
 
-    border-radius:18px;
+    padding:24px;
 
-    padding:28px;
+    overflow:hidden;
 }
 
-.bi-chart-card h3{
+/* TITULOS */
 
-    margin-bottom:22px;
-
-    font-size:22px;
+.chart-top{
+    margin-bottom:18px;
 }
 
-.bi-chart-card canvas{
+.chart-top h3{
+    font-size:30px;
+    font-weight:800;
+}
 
+.chart-top p{
+    margin-top:6px;
+    color:#8d96a5;
+    font-size:14px;
+}
+
+/* TAMANHOS */
+
+.big-card{
+    height:500px;
+}
+
+.canvas-box{
+    position:relative;
+    width:100%;
+    height:340px;
+}
+
+.big-card .canvas-box{
+    height:390px;
+}
+
+.donut-box{
+    height:320px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* GRAFICOS */
+
+canvas{
     width:100% !important;
+    height:100% !important;
+}
 
-    height:320px !important;
+/* RANKING */
+
+.ranking-list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.ranking-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:20px;
+
+    background:rgba(255,255,255,0.03);
+
+    border:1px solid rgba(255,255,255,0.04);
+
+    padding:16px 18px;
+
+    border-radius:14px;
+
+    transition:.2s;
+}
+
+.ranking-item:hover{
+    background:rgba(255,255,255,0.05);
+}
+
+.ranking-item strong{
+    color:white;
+    font-size:14px;
+}
+
+.ranking-item span{
+    color:#ff4d4d;
+    font-weight:700;
+    white-space:nowrap;
 }
 
 /* RESPONSIVO */
 
-@media(max-width:1300px){
+@media(max-width:1400px){
 
-    .bi-kpi-grid{
-
-        grid-template-columns:
-        repeat(2,1fr);
+    .bi-kpis{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .bi-chart-grid{
-
+    .bi-grid{
         grid-template-columns:1fr;
     }
 }
 
-@media(max-width:780px){
+@media(max-width:768px){
 
-    .bi-dashboard-header{
-
+    .bi-header{
         flex-direction:column;
-
-        gap:20px;
     }
 
-    .bi-dashboard-title h1{
-
-        font-size:40px;
+    .bi-header h1{
+        font-size:42px;
     }
 
-    .bi-kpi-grid{
-
+    .bi-kpis{
         grid-template-columns:1fr;
+    }
+
+    .big-card{
+        height:auto;
+    }
+
+    .canvas-box,
+    .big-card .canvas-box{
+        height:320px;
     }
 }
