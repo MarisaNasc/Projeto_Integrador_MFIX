@@ -89,3 +89,4 @@ SELECT
 FROM mov_estoque m;
 
 
+SELECT * FROM fato_movimentacao

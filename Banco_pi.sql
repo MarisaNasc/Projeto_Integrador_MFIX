@@ -100,3 +100,10 @@ UPDATE dim_produto SET categoria_prod = 'Ferramentas' WHERE id_produto = 38;
 UPDATE dim_produto SET categoria_prod = 'Dispensers' WHERE id_produto IN (1, 3);
 
 UPDATE dim_produto SET categoria_prod = 'Higiene' WHERE id_produto = 2;
+
+
+SELECT
+    MAX(valor_total),
+    MIN(valor_total),
+    AVG(valor_total)
+FROM fato_movimentacao;

@@ -71,7 +71,7 @@
 
         <div class="bi-kpi-card">
 
-            <span>RECEITA TOTAL</span>
+            <span>FATURAMENTO: ÚLTIMOS 2 ANOS </span>
 
             <h2>
 
@@ -90,7 +90,7 @@
 
         <div class="bi-kpi-card">
 
-            <span>PRODUTOS</span>
+            <span>PRODUTOS ATIVOS</span>
 
             <h2>
                 {{ kpis[0].produtos }}
@@ -108,6 +108,24 @@
 
         </div>
 
+        <div class="bi-kpi-card">
+
+            <span>TICKET MÉDIO SAÍDAS</span>
+
+            <h2>
+
+                R$
+                {{
+                    "{:,.2f}".format(
+                        ticket_medio[0].ticket
+                    ).replace(",", "X")
+                    .replace(".", ",")
+                    .replace("X", ".")
+                }}
+
+            </h2>
+
+        </div>
         <div class="bi-kpi-card entrada-card">
 
             <span>ENTRADAS</span>
@@ -292,28 +310,9 @@ const financeiro =
 {{ financeiro | tojson | safe }};
 
 const categorias =
+{{ categorias | tojson | safe }};
 
-[
-    {
-        categoria:"Eletrônicos",
-        total:42000
-    },
-
-    {
-        categoria:"Periféricos",
-        total:28000
-    },
-
-    {
-        categoria:"Hardware",
-        total:36000
-    },
-
-    {
-        categoria:"Acessórios",
-        total:19000
-    }
-];
+console.log(categorias);
 
 const movimentacoes = [
 
@@ -427,7 +426,7 @@ new Chart(
 
             labels:
             categorias.map(
-                item => item.categoria
+                item => item.categoria_prod
             ),
 
             datasets:[{

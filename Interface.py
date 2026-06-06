@@ -268,25 +268,27 @@ def dashboard():
     # ==========================================
     # KPIS PRINCIPAIS
     # ==========================================
-
+    
     kpis = query_db("""
 
-        SELECT
+    SELECT
 
-            COUNT(*) AS total_mov,
+        COUNT(*) AS total_mov,
 
-            ROUND(
-                SUM(valor_total)::numeric,
-                2
-            ) AS receita,
+        ROUND(
+            SUM(valor_total)
+            FILTER(
+                WHERE id_tipo_mov = 2
+            )::numeric,
+            2
+        ) AS receita,
 
-            COUNT(DISTINCT id_produto)
-            AS produtos
+        COUNT(DISTINCT id_produto)
+        AS produtos
 
-        FROM fato_movimentacao
+    FROM fato_movimentacao
 
     """)
-
     # ==========================================
     # FORNECEDORES
     # ==========================================
@@ -334,6 +336,48 @@ def dashboard():
 
     """)
 
+ # ==========================================
+# TICKET MÉDIO
+# ==========================================
+
+    ticket_medio = query_db("""
+
+    SELECT
+
+        ROUND(
+            AVG(valor_total)::numeric,
+            2
+        ) AS ticket
+
+    FROM fato_movimentacao
+
+    WHERE id_tipo_mov = 2
+
+    """)
+    # ==========================================
+    # CATEGORIAS
+    # ==========================================
+
+    categorias = query_db("""
+
+    SELECT
+
+        dp.categoria_prod,
+        ROUND(
+            SUM(fm.valor_total)::numeric,
+            2
+        ) AS total
+
+    FROM fato_movimentacao fm
+
+    JOIN dim_produto dp
+        ON fm.id_produto = dp.id_produto
+
+    GROUP BY dp.categoria_prod
+
+    ORDER BY total DESC
+
+    """)
     # ==========================================
     # AJUSTES
     # ==========================================
@@ -439,7 +483,10 @@ def dashboard():
 
         top_produtos=top_produtos,
 
-        financeiro=financeiro
+        financeiro=financeiro,
+        
+        categorias=categorias
+
     )
 
 # =========================================================
