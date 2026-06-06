@@ -496,6 +496,51 @@ def produto(nome):
     return jsonify(dados)
 
 # =========================================================
+# PROCEDURE CURSOR
+# =========================================================
+
+def executar_cursor_movimentacao(
+    produto,
+    fornecedor
+):
+
+    with engine.connect() as conn:
+
+        trans = conn.begin()
+
+        conn.execute(text("""
+
+            CALL sp_movimentacao_filtro(
+                :produto,
+                :fornecedor,
+                'cursor_mov'
+            )
+
+        """), {
+
+            "produto": produto,
+            "fornecedor": fornecedor
+
+        })
+
+        result = conn.execute(
+            text(
+                "FETCH ALL FROM cursor_mov"
+            )
+        )
+
+        df = pd.DataFrame(
+            result.fetchall(),
+            columns=result.keys()
+        )
+
+        trans.commit()
+
+    return df.to_dict(
+        orient="records"
+    )
+
+# =========================================================
 # START
 # =========================================================
 
