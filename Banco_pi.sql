@@ -91,17 +91,6 @@ SELECT * FROM tipo_mov
 
 SELECT  id_produto, descricao_prod, categoria_prod FROM dim_produto;
 
-UPDATE dim_produto SET categoria_prod = 'Fixadores' WHERE id_produto IN (11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 36, 37, 41, 42, 43, 44, 45, 46, 47, 50, 58, 59, 60);
-
-UPDATE dim_produto SET categoria_prod = 'Equipamentos' WHERE id_produto IN (28, 29, 30, 32, 33, 34, 35, 39, 40);
-
-UPDATE dim_produto SET categoria_prod = 'Ferramentas' WHERE id_produto = 38;
-
-UPDATE dim_produto SET categoria_prod = 'Dispensers' WHERE id_produto IN (1, 3);
-
-UPDATE dim_produto SET categoria_prod = 'Higiene' WHERE id_produto = 2;
-
-
 SELECT
     MAX(valor_total),
     MIN(valor_total),

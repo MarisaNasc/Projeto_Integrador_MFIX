@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from sqlalchemy import create_engine, text
 import pandas as pd
+from prophet import Prophet
 
 app = Flask(__name__)
 
@@ -480,7 +481,7 @@ def dashboard():
 
 @app.route("/ia")
 def ia():
-
+        
         df_ia = pd.read_sql("""
 
             SELECT
@@ -500,25 +501,31 @@ def ia():
         dados_diarios = (
 
             df_ia.groupby("data")["valor_total"]
-            .mean()
+            .sum()
             .reset_index()
 
         )
 
+        raise Exception(
+         str(dados_diarios["valor_total"].describe())
+)
+
+        # COM OUTLIERS
+
         media_preco = round(
-            dados_diarios["valor_total"].mean(),
-            2
-        )
+                dados_diarios["valor_total"].mean(),
+                2
+            )
 
         mediana_preco = round(
-            dados_diarios["valor_total"].median(),
-            2
-        )
+                dados_diarios["valor_total"].median(),
+                2
+            )
 
         desvio_padrao = round(
-            dados_diarios["valor_total"].std(),
-            2
-        )
+                dados_diarios["valor_total"].std(),
+                2
+            )
 
         Q1 = dados_diarios["valor_total"].quantile(0.25)
 
@@ -529,6 +536,70 @@ def ia():
         limite_inferior = Q1 - (1.5 * IQR)
 
         limite_superior = Q3 + (1.5 * IQR)
+
+
+        prophet_df = dados_diarios.rename(
+            columns={
+                "data": "ds",
+                "valor_total": "y"
+            }
+        )
+
+
+        modelo = Prophet(
+            daily_seasonality=True,
+            weekly_seasonality=True,
+            yearly_seasonality=False
+        )
+
+        modelo.fit(prophet_df)
+
+
+        future = modelo.make_future_dataframe(
+            periods=56
+        )
+
+        forecast = modelo.predict(future)
+
+        previsao_8_semanas = forecast.tail(56)
+
+        media_futura = round(
+            previsao_8_semanas["yhat"].mean(),
+            2
+        )
+
+        maximo_previsto = round(
+            previsao_8_semanas["yhat"].max(),
+            2
+        )
+
+        minimo_previsto = round(
+            previsao_8_semanas["yhat"].min(),
+            2
+        )
+
+
+        if media_futura > media_preco:
+            tendencia = "CRESCIMENTO"
+        elif media_futura < media_preco:
+            tendencia = "QUEDA"
+        else:
+            tendencia = "ESTÁVEL"
+
+        insight = f"""
+                A previsão para as próximas 8 semanas
+                indica faturamento médio estimado de
+                R$ {media_futura:,.2f}.
+
+                O maior valor previsto é
+                R$ {maximo_previsto:,.2f}.
+
+                O menor valor previsto é
+                R$ {minimo_previsto:,.2f}.
+
+                Tendência: {tendencia}.
+                """
+
 
         outliers = dados_diarios[
 
@@ -562,6 +633,23 @@ def ia():
 
         ]
 
+                # SEM OUTLIERS
+
+        media_limpa = round(
+            dados_sem_outliers["valor_total"].mean(),
+            2
+        )
+
+        mediana_limpa = round(
+            dados_sem_outliers["valor_total"].median(),
+            2
+        )
+
+        desvio_limpo = round(
+            dados_sem_outliers["valor_total"].std(),
+            2
+        )
+
         return render_template(
 
             "ia.html",
@@ -572,6 +660,10 @@ def ia():
 
             desvio=desvio_padrao,
 
+            media_limpa=media_limpa,
+            mediana_limpa=mediana_limpa,
+            desvio_limpo=desvio_limpo,
+
             qtd_outliers=len(outliers),
 
             dados_ia=dados_diarios.to_dict(
@@ -580,7 +672,16 @@ def ia():
 
             dados_limpos=dados_sem_outliers.to_dict(
                 orient="records"
-            )
+            ),
+             previsao=previsao_8_semanas.to_dict(
+                orient="records"
+            ),
+                    
+            media_futura=media_futura,
+            maximo_previsto=maximo_previsto,
+            minimo_previsto=minimo_previsto,
+            tendencia=tendencia,
+            insight=insight
 
         )
 # =========================================================

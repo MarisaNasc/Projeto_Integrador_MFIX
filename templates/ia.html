@@ -4,7 +4,6 @@
 
 <head>
 
-```
 <meta charset="UTF-8">
 
 <meta
@@ -20,7 +19,6 @@
     rel="stylesheet"
     href="{{ url_for('static', filename='style.css') }}"
 >
-```
 
 </head>
 
@@ -28,7 +26,6 @@
 
 <div class="bi-wrapper">
 
-```
 <div class="bi-header">
 
     <div>
@@ -63,15 +60,7 @@
 
         <span>MÉDIA</span>
 
-        <h2>
-          R$
-    {{
-        "{:,.2f}".format(media)
-        .replace(",", "X")
-        .replace(".", ",")
-        .replace("X", ".")
-    }}
-</h2>
+       <h2 id="mediaCard"></h2>
 
     </div>
 
@@ -79,31 +68,14 @@
 
         <span>MEDIANA</span>
 
-        <h2>
-             R$
-    {{
-        "{:,.2f}".format(mediana)
-        .replace(",", "X")
-        .replace(".", ",")
-        .replace("X", ".")
-    }}
-        </h2>
-
+      <h2 id="medianaCard"></h2>
     </div>
 
     <div class="bi-kpi-card">
 
         <span>DESVIO PADRÃO</span>
 
-        <h2>
-              R$
-    {{
-        "{:,.2f}".format(desvio)
-        .replace(",", "X")
-        .replace(".", ",")
-        .replace("X", ".")
-    }}
-        </h2>
+      <h2 id="desvioCard"></h2>
 
     </div>
 
@@ -144,7 +116,7 @@
     </div>
 
 </div>
-```
+
 
 </div>
 
@@ -156,7 +128,47 @@ const dadosIA =
 const dadosLimpos =
 {{ dados_limpos | tojson | safe }};
 
-new Chart(
+const previsao =
+{{ previsao | tojson | safe }};
+
+const stats = {
+
+    original:{
+
+        media: {{ media }},
+        mediana: {{ mediana }},
+        desvio: {{ desvio }}
+
+    },
+
+    limpa:{
+
+        media: {{ media_limpa }},
+        mediana: {{ mediana_limpa }},
+        desvio: {{ desvio_limpo }}
+
+    }
+
+};
+
+function atualizarCards(tipo){
+
+    const dados = stats[tipo];
+
+    document.getElementById("mediaCard").innerHTML =
+        "R$ " + dados.media.toLocaleString("pt-BR");
+
+    document.getElementById("medianaCard").innerHTML =
+        "R$ " + dados.mediana.toLocaleString("pt-BR");
+
+    document.getElementById("desvioCard").innerHTML =
+        "R$ " + dados.desvio.toLocaleString("pt-BR");
+
+}
+
+atualizarCards("original");
+
+const grafico = new Chart(
 
     document.getElementById(
         'graficoIA'
@@ -168,50 +180,41 @@ new Chart(
 
         data:{
 
-            labels:
-            dadosIA.map(
-                item => item.data
-            ),
+            labels: [
+                ...dadosIA.map(item => item.data),
+                ...previsao.map(item => item.ds)
+            ],
 
             datasets:[
 
-                {
+            {
+                label:'Dados Originais',
+                data:dadosIA.map(item => item.valor_total),
+                borderColor:'#ff4d4d',
+                backgroundColor:'rgba(255,77,77,0.1)',
+                tension:0.4
+            },
 
-                    label:'Dados Originais',
+            {
+                label:'Sem Outliers',
+                data:dadosLimpos.map(item => item.valor_total),
+                borderColor:'#37ff9c',
+                backgroundColor:'rgba(55,255,156,0.1)',
+                tension:0.4
+            },
 
-                    data:
-                    dadosIA.map(
-                        item => item.valor_total
-                    ),
-
-                    borderColor:'#ff4d4d',
-
-                    backgroundColor:
-                    'rgba(255,77,77,0.1)',
-
+            {
+                label:'Previsão 8 Semanas',
+                data:[
+                 ...Array(dadosIA.length).fill(null),
+                ...previsao.map(item => item.yhat)
+                    ],
+                    borderColor:'#00d4ff',
+                    backgroundColor:'rgba(0,212,255,0.1)',
                     tension:0.4
+            }
 
-                },
-
-                {
-
-                    label:'Sem Outliers',
-
-                    data:
-                    dadosLimpos.map(
-                        item => item.valor_total
-                    ),
-
-                    borderColor:'#37ff9c',
-
-                    backgroundColor:
-                    'rgba(55,255,156,0.1)',
-
-                    tension:0.4
-
-                }
-
-            ]
+        ]
 
         },
 
@@ -227,6 +230,32 @@ new Chart(
 
                     labels:{
                         color:'white'
+                    },
+
+                    onClick:(e, legendItem, legend)=>{
+
+                        Chart.defaults.plugins.legend.onClick(
+                            e,
+                            legendItem,
+                            legend
+                        );
+
+                        const originalVisivel =
+                            legend.chart.isDatasetVisible(0);
+
+                        const limpaVisivel =
+                            legend.chart.isDatasetVisible(1);
+
+                        if(!originalVisivel && limpaVisivel){
+
+                            atualizarCards("limpa");
+
+                        }else{
+
+                            atualizarCards("original");
+
+                        }
+
                     }
 
                 }
