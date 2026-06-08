@@ -798,4 +798,14 @@ canvas{
     .big-card .canvas-box{
         height:320px;
     }
+
+    .big-card{
+    height:550px;
+}
+
+.canvas-box{
+    height:450px;
+    position:relative;
+}
+
 }

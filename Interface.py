@@ -395,23 +395,6 @@ def dashboard():
     """)
 
     # ==========================================
-    # TICKET MÉDIO
-    # ==========================================
-
-    ticket_medio = query_db("""
-
-        SELECT
-
-            ROUND(
-                AVG(valor_total)::numeric,
-                2
-            ) AS ticket
-
-        FROM fato_movimentacao
-
-    """)
-
-    # ==========================================
     # TOP PRODUTOS
     # ==========================================
 
@@ -464,7 +447,7 @@ def dashboard():
         LIMIT 10
 
     """)
-
+#------------------------------------------------------#
     return render_template(
 
         "dashboard.html",
@@ -488,7 +471,115 @@ def dashboard():
         categorias=categorias
 
     )
+    # ==========================================
+    # IA
+    # ==========================================
 
+@app.route("/ia")
+def ia():
+
+        df_ia = pd.read_sql("""
+
+            SELECT
+                data,
+                valor_total
+
+            FROM fato_movimentacao
+
+            WHERE id_tipo_mov = 2
+
+        """, engine)
+
+        df_ia["data"] = pd.to_datetime(
+            df_ia["data"]
+        )
+
+        dados_diarios = (
+
+            df_ia.groupby("data")["valor_total"]
+            .mean()
+            .reset_index()
+
+        )
+
+        media_preco = round(
+            dados_diarios["valor_total"].mean(),
+            2
+        )
+
+        mediana_preco = round(
+            dados_diarios["valor_total"].median(),
+            2
+        )
+
+        desvio_padrao = round(
+            dados_diarios["valor_total"].std(),
+            2
+        )
+
+        Q1 = dados_diarios["valor_total"].quantile(0.25)
+
+        Q3 = dados_diarios["valor_total"].quantile(0.75)
+
+        IQR = Q3 - Q1
+
+        limite_inferior = Q1 - (1.5 * IQR)
+
+        limite_superior = Q3 + (1.5 * IQR)
+
+        outliers = dados_diarios[
+
+            (
+                dados_diarios["valor_total"]
+                < limite_inferior
+            )
+
+            |
+
+            (
+                dados_diarios["valor_total"]
+                > limite_superior
+            )
+
+        ]
+
+        dados_sem_outliers = dados_diarios[
+
+            (
+                dados_diarios["valor_total"]
+                >= limite_inferior
+            )
+
+            &
+
+            (
+                dados_diarios["valor_total"]
+                <= limite_superior
+            )
+
+        ]
+
+        return render_template(
+
+            "ia.html",
+
+            media=media_preco,
+
+            mediana=mediana_preco,
+
+            desvio=desvio_padrao,
+
+            qtd_outliers=len(outliers),
+
+            dados_ia=dados_diarios.to_dict(
+                orient="records"
+            ),
+
+            dados_limpos=dados_sem_outliers.to_dict(
+                orient="records"
+            )
+
+        )
 # =========================================================
 # MODAL PRODUTO
 # =========================================================

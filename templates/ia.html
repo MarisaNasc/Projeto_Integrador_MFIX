@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>IA Analytics</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+>
+```
+
+</head>
+
+<body class="bi-dashboard-body">
+
+<div class="bi-wrapper">
+
+```
+<div class="bi-header">
+
+    <div>
+
+        <small>
+            MFIX • INTELIGÊNCIA ARTIFICIAL
+        </small>
+
+        <h1>
+            IA
+            <span>ANALYTICS</span>
+        </h1>
+
+        <p>
+            Análise estatística das movimentações
+        </p>
+
+    </div>
+
+    <a
+        href="/dashboard"
+        class="bi-btn"
+    >
+        VOLTAR AO DASHBOARD
+    </a>
+
+</div>
+
+<div class="bi-kpis">
+
+    <div class="bi-kpi-card">
+
+        <span>MÉDIA</span>
+
+        <h2>
+          R$
+    {{
+        "{:,.2f}".format(media)
+        .replace(",", "X")
+        .replace(".", ",")
+        .replace("X", ".")
+    }}
+</h2>
+
+    </div>
+
+    <div class="bi-kpi-card">
+
+        <span>MEDIANA</span>
+
+        <h2>
+             R$
+    {{
+        "{:,.2f}".format(mediana)
+        .replace(",", "X")
+        .replace(".", ",")
+        .replace("X", ".")
+    }}
+        </h2>
+
+    </div>
+
+    <div class="bi-kpi-card">
+
+        <span>DESVIO PADRÃO</span>
+
+        <h2>
+              R$
+    {{
+        "{:,.2f}".format(desvio)
+        .replace(",", "X")
+        .replace(".", ",")
+        .replace("X", ".")
+    }}
+        </h2>
+
+    </div>
+
+    <div class="bi-kpi-card">
+
+        <span>OUTLIERS</span>
+
+        <h2>
+            {{ qtd_outliers }}
+        </h2>
+
+    </div>
+
+</div>
+
+<div class="bi-chart-card big-card">
+
+    <div class="chart-top">
+
+        <div>
+
+            <h3>
+                Comparação de Dados
+            </h3>
+
+            <p>
+                Série original vs série sem outliers
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="canvas-box">
+
+        <canvas id="graficoIA"></canvas>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<script>
+
+const dadosIA =
+{{ dados_ia | tojson | safe }};
+
+const dadosLimpos =
+{{ dados_limpos | tojson | safe }};
+
+new Chart(
+
+    document.getElementById(
+        'graficoIA'
+    ),
+
+    {
+
+        type:'line',
+
+        data:{
+
+            labels:
+            dadosIA.map(
+                item => item.data
+            ),
+
+            datasets:[
+
+                {
+
+                    label:'Dados Originais',
+
+                    data:
+                    dadosIA.map(
+                        item => item.valor_total
+                    ),
+
+                    borderColor:'#ff4d4d',
+
+                    backgroundColor:
+                    'rgba(255,77,77,0.1)',
+
+                    tension:0.4
+
+                },
+
+                {
+
+                    label:'Sem Outliers',
+
+                    data:
+                    dadosLimpos.map(
+                        item => item.valor_total
+                    ),
+
+                    borderColor:'#37ff9c',
+
+                    backgroundColor:
+                    'rgba(55,255,156,0.1)',
+
+                    tension:0.4
+
+                }
+
+            ]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+
+                legend:{
+
+                    labels:{
+                        color:'white'
+                    }
+
+                }
+
+            },
+
+            scales:{
+
+                x:{
+
+                    ticks:{
+                        color:'#9aa4b5'
+                    },
+
+                    grid:{
+                        display:false
+                    }
+
+                },
+
+                y:{
+
+                    ticks:{
+                        color:'#9aa4b5'
+                    },
+
+                    grid:{
+                        color:'rgba(255,255,255,0.05)'
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+</script>
+
+</body>
+</html>
