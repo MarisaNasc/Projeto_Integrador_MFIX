@@ -81,7 +81,10 @@ def home():
             fm.quantidade,
             fm.valor_total,
 
-            fm.data,
+            TO_CHAR(
+                fm.data,
+                'DD/MM/YYYY'
+            ) AS data,
 
             (
 
@@ -430,7 +433,7 @@ def dashboard():
 
             TO_CHAR(
                 data,
-                'DD/MM'
+                 'DD/MM/YYYY'
             ) AS data,
 
             ROUND(
@@ -599,8 +602,11 @@ def produto(nome):
             fm.quantidade,
             fm.valor_total,
             dt.nome_transp,
-            fm.data
-
+            TO_CHAR(
+                fm.data,
+                'DD/MM/YYYY'
+            ) AS data
+                     
         FROM fato_movimentacao fm
 
         LEFT JOIN dim_produto dp

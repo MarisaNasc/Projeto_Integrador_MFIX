@@ -139,17 +139,18 @@
     name="fornecedor"
     placeholder="Fornecedor"
     >
-
+    
     <input
-    type="date"
+    type="text"
     name="data_inicial"
+    placeholder="DD/MM/AAAA"
     >
 
     <input
-    type="date"
+    type="text"
     name="data_final"
+    placeholder="DD/MM/AAAA"
     >
-
     <button type="submit">
 
         PESQUISAR
@@ -242,7 +243,15 @@
         <div>
 
             <span>VALOR</span>
-            <p>R$ {{ item.valor_total }}</p>
+            <p>
+                 R$
+    {{
+        "{:,.2f}".format(item.valor_total)
+        .replace(",", "X")
+        .replace(".", ",")
+        .replace("X", ".")
+    }}
+            </p>
 
         </div>
 
