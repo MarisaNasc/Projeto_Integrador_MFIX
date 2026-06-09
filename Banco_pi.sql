@@ -96,3 +96,45 @@ SELECT
     MIN(valor_total),
     AVG(valor_total)
 FROM fato_movimentacao;
+
+
+SELECT
+    fm.data,
+    dp.descricao_prod,
+    fm.quantidade,
+    fm.valor_total
+FROM fato_movimentacao fm
+JOIN dim_produto dp
+    ON fm.id_produto = dp.id_produto
+ORDER BY fm.valor_total DESC
+LIMIT 20;
+
+
+SELECT
+    id_tipo_mov,
+    id_fornecedor,
+    COUNT(*)
+FROM fato_movimentacao
+GROUP BY id_tipo_mov, id_fornecedor
+ORDER BY id_tipo_mov;
+
+    fm.data,
+    dp.descricao_prod,
+    fm.quantidade,
+    fm.valor_total
+FROM fato_movimentacao fm
+JOIN dim_produto dp
+    ON fm.id_produto = dp.id_produto
+ORDER BY fm.valor_total DESC
+LIMIT 20;
+
+
+SELECT * FROM fato_movimentacao;
+
+SELECT
+    column_name,
+    data_type
+FROM information_schema.columns
+WHERE table_name = 'fato_movimentacao'
+AND column_name = 'data';
+

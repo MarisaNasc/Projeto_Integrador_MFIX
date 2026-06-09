@@ -90,6 +90,16 @@
 
         <div class="bi-kpi-card">
 
+        <span>CRESCIMENTO</span>
+
+        <h2>
+            {{ crescimento[0].crescimento }}%
+        </h2>
+
+    </div>
+
+        <div class="bi-kpi-card">
+
             <span>PRODUTOS ATIVOS</span>
 
             <h2>
@@ -125,36 +135,7 @@
 
             </h2>
 
-        </div>
-        <div class="bi-kpi-card entrada-card">
-
-            <span>ENTRADAS</span>
-
-            <h2>
-                {{ entradas[0].entradas }}
-            </h2>
-
-        </div>
-
-        <div class="bi-kpi-card saida-card">
-
-            <span>SAÍDAS</span>
-
-            <h2>
-                {{ saidas[0].saidas }}
-            </h2>
-
-        </div>
-
-        <div class="bi-kpi-card ajuste-card">
-
-            <span>AJUSTES</span>
-
-            <h2>
-                {{ ajustes[0].ajustes }}
-            </h2>
-
-        </div>
+            </div>
 
     </div>
 
@@ -292,6 +273,7 @@
 
                     </div>
 
+                    
                     {% endfor %}
 
                 </div>
@@ -545,6 +527,8 @@ new Chart(
         }
     }
 );
+
+
 
 </script>
 
