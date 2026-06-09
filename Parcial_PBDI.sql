@@ -1,7 +1,10 @@
-CREATE OR REPLACE PROCEDURE sp_movimentacao_filtro(
-    p_produto VARCHAR,
-    p_fornecedor VARCHAR,
-    p_cursor REFCURSOR
+CREATE OR REPLACE PROCEDURE sp_movimentacao_filtro_v2(
+    IN p_produto TEXT,
+    IN p_fornecedor TEXT,
+    IN p_movimentacao INTEGER,
+    IN p_data_inicial DATE,
+    IN p_data_final DATE,
+    INOUT p_cursor REFCURSOR
 )
 LANGUAGE plpgsql
 AS
@@ -9,81 +12,80 @@ $$
 DECLARE
     v_sql TEXT;
 BEGIN
-
     v_sql := '
         SELECT
-
-            dp.id_produto,
             dp.descricao_prod,
             dp.categoria_prod,
             dp.procedencia_prod,
-
-            df.nome_forn,
-
-            dt.nome_transp,
-
+            COALESCE(df.nome_forn, ''Não informado'') AS nome_forn,
+            tm.descricao_mov,
+            COALESCE(dt.nome_transp, ''Não informado'') AS nome_transp,
             dl.numero_lote,
             dl.data_validade_lote,
-
-            tm.descricao_mov,
-
             fm.quantidade,
             fm.valor_total,
-            fm.data
-
+            TO_CHAR(fm.data, ''DD/MM/YYYY'') AS data,
+            (
+                SELECT MAX(f2.quantidade)
+                FROM fato_movimentacao f2
+                WHERE f2.id_produto = fm.id_produto
+                  AND f2.id_tipo_mov = 2
+            ) AS melhor_venda
         FROM fato_movimentacao fm
-
-        LEFT JOIN dim_produto dp
-            ON fm.id_produto = dp.id_produto
-
-        LEFT JOIN dim_fornecedor df
-            ON fm.id_fornecedor = df.id_fornecedor
-
-        LEFT JOIN dim_transportadora dt
-            ON fm.id_transp = dt.id_transp
-
-        LEFT JOIN dim_lote dl
-            ON fm.id_lote = dl.id_lote
-
-        LEFT JOIN dim_tipo_mov tm
-            ON fm.id_tipo_mov = tm.id_tipo_mov
-
+        LEFT JOIN dim_produto dp ON fm.id_produto = dp.id_produto
+        LEFT JOIN dim_fornecedor df ON fm.id_fornecedor = df.id_fornecedor
+        LEFT JOIN dim_tipo_mov tm ON fm.id_tipo_mov = tm.id_tipo_mov
+        LEFT JOIN dim_transportadora dt ON fm.id_transp = dt.id_transp
+        LEFT JOIN dim_lote dl ON fm.id_lote = dl.id_lote
         WHERE 1=1
     ';
 
-    IF p_produto IS NOT NULL
-       AND p_produto <> '' THEN
-
-        v_sql := v_sql ||
-        format(
-            ' AND LOWER(dp.descricao_prod) LIKE LOWER(%L)',
-            '%' || p_produto || '%'
+    IF p_produto IS NOT NULL AND TRIM(p_produto) <> '' THEN
+        v_sql := v_sql || format(
+            ' AND dp.descricao_prod ILIKE %L',
+            '%' || TRIM(p_produto) || '%'
         );
-
     END IF;
 
-    IF p_fornecedor IS NOT NULL
-       AND p_fornecedor <> '' THEN
-
-        v_sql := v_sql ||
-        format(
-            ' AND LOWER(df.nome_forn) LIKE LOWER(%L)',
-            '%' || p_fornecedor || '%'
+    IF p_fornecedor IS NOT NULL AND TRIM(p_fornecedor) <> '' THEN
+        v_sql := v_sql || format(
+            ' AND df.nome_forn ILIKE %L',
+            '%' || TRIM(p_fornecedor) || '%'
         );
+    END IF;
 
+    IF p_movimentacao IS NOT NULL THEN
+        v_sql := v_sql || format(
+            ' AND fm.id_tipo_mov = %s',
+            p_movimentacao
+        );
+    END IF;
+
+    IF p_data_inicial IS NOT NULL THEN
+        v_sql := v_sql || format(
+            ' AND fm.data >= %L',
+            p_data_inicial
+        );
+    END IF;
+
+    IF p_data_final IS NOT NULL THEN
+        v_sql := v_sql || format(
+            ' AND fm.data <= %L',
+            p_data_final
+        );
     END IF;
 
     v_sql := v_sql || '
         ORDER BY fm.data DESC
+        LIMIT 200
     ';
 
-    RAISE NOTICE 'SQL: %', v_sql;
+    RAISE NOTICE 'SQL FINAL: %', v_sql;
 
     OPEN p_cursor FOR EXECUTE v_sql;
-
 END;
 $$;
-
+$$;
 BEGIN;
 
 CALL sp_movimentacao_filtro(
@@ -155,4 +157,3 @@ AFTER INSERT
 ON fato_movimentacao
 FOR EACH ROW
 EXECUTE FUNCTION fn_log_movimentacao();
-

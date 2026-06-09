@@ -139,4 +139,6 @@ WHERE table_name = 'fato_movimentacao'
 AND column_name = 'data';
 
 
+TRUNCATE TABLE mov_estoque RESTART IDENTITY CASCADE;
+
 

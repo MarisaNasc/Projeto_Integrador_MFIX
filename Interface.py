@@ -36,7 +36,6 @@ def query_db(query, params={}):
 # =========================================================
 # INTERFACE DW
 # =========================================================
-
 @app.route("/", methods=["GET", "POST"])
 def home():
 
@@ -60,152 +59,18 @@ def home():
         "data_final", ""
     ).strip()
 
-    query = """
-
-        SELECT
-
-            dp.descricao_prod,
-            dp.categoria_prod,
-            dp.procedencia_prod,
-
-            COALESCE(df.nome_forn, 'Não informado')
-            AS nome_forn,
-
-            tm.descricao_mov,
-
-            COALESCE(dt.nome_transp, 'Não informado')
-            AS nome_transp,
-
-            dl.numero_lote,
-            dl.data_validade_lote,
-
-            fm.quantidade,
-            fm.valor_total,
-
-            TO_CHAR(
-                fm.data,
-                'DD/MM/YYYY'
-            ) AS data,
-
-            (
-
-                SELECT MAX(f2.quantidade)
-
-                FROM fato_movimentacao f2
-
-                WHERE
-                    f2.id_produto = fm.id_produto
-                    AND f2.id_tipo_mov = 2
-
-            ) AS melhor_venda
-
-        FROM fato_movimentacao fm
-
-        LEFT JOIN dim_produto dp
-        ON fm.id_produto = dp.id_produto
-
-        LEFT JOIN dim_fornecedor df
-        ON fm.id_fornecedor = df.id_fornecedor
-
-        LEFT JOIN dim_tipo_mov tm
-        ON fm.id_tipo_mov = tm.id_tipo_mov
-
-        LEFT JOIN dim_transportadora dt
-        ON fm.id_transp = dt.id_transp
-
-        LEFT JOIN dim_lote dl
-        ON fm.id_lote = dl.id_lote
-
-        WHERE 1=1
-
-    """
-
-    params = {}
-
     # =====================================================
-    # PRODUTO
+    # CONSULTA VIA PROCEDURE
+    # produto + fornecedor + movimentação
     # =====================================================
 
-    if produto != "":
-
-        query += """
-
-            AND LOWER(dp.descricao_prod)
-            LIKE LOWER(:produto)
-
-        """
-
-        params["produto"] = f"%{produto}%"
-
-    # =====================================================
-    # FORNECEDOR
-    # =====================================================
-
-    if fornecedor != "":
-
-        query += """
-
-            AND LOWER(df.nome_forn)
-            LIKE LOWER(:fornecedor)
-
-        """
-
-        params["fornecedor"] = f"%{fornecedor}%"
-
-    # =====================================================
-    # MOVIMENTAÇÃO
-    # =====================================================
-
-    if movimentacao != "":
-
-        query += """
-
-            AND CAST(fm.id_tipo_mov AS TEXT)
-            = :movimentacao
-
-        """
-
-        params["movimentacao"] = str(movimentacao)
-
-   # =====================================================
-    # DATA INICIAL
-    # =====================================================
-
-    if data_inicial != "":
-
-        query += """
-
-            AND fm.data <= CAST(:data_final AS DATE)
-
-        """
-
-        params["data_inicial"] = data_inicial
-
-    # =====================================================
-    # DATA FINAL
-    # =====================================================
-
-    if data_final != "":
-
-        query += """
-
-            AND fm.data <= :data_final
-
-        """
-
-        params["data_final"] = data_final
-
-    query += """
-
-        ORDER BY fm.data DESC
-
-        LIMIT 200
-
-    """
-
-    dados = query_db(query, params)
-    
-
+    dados = executar_cursor_movimentacao(
+    produto,
+    fornecedor,
+    movimentacao,
+    data_inicial,
+    data_final
+)
 
     # =====================================================
     # KPIs HOME
@@ -221,9 +86,9 @@ def home():
             AS fornecedores,
 
             COUNT(*) FILTER(
-        WHERE id_tipo_mov = 2
-        AND data = CURRENT_DATE
-    ) AS movimentacoes_hoje
+                WHERE id_tipo_mov = 2
+                AND data = CURRENT_DATE
+            ) AS movimentacoes_hoje
 
         FROM fato_movimentacao
 
@@ -790,50 +655,76 @@ def produto(nome):
     return jsonify(dados)
 
 # =========================================================
-# PROCEDURE CURSOR
+# PROCEDURE CURSOR PARA FAZER FILTROS
 # =========================================================
 
 def executar_cursor_movimentacao(
     produto,
-    fornecedor
+    fornecedor,
+    movimentacao,
+    data_inicial,
+    data_final
 ):
+
+    mov_id = None
+
+    if movimentacao != "":
+        mov_id = int(movimentacao)
+
+    data_ini = None
+
+    if data_inicial != "":
+        data_ini = data_inicial
+
+    data_fim = None
+
+    if data_final != "":
+        data_fim = data_final
 
     with engine.connect() as conn:
 
         trans = conn.begin()
 
-        conn.execute(text("""
+        try:
 
-            CALL sp_movimentacao_filtro(
-                :produto,
-                :fornecedor,
-                'cursor_mov'
+            conn.execute(text("""
+
+                CALL sp_movimentacao_filtro_v2(
+                    CAST(:produto AS TEXT),
+                    CAST(:fornecedor AS TEXT),
+                    CAST(:movimentacao AS INTEGER),
+                    CAST(:data_inicial AS DATE),
+                    CAST(:data_final AS DATE),
+                    CAST('cursor_mov' AS REFCURSOR)
+                )
+
+            """), {
+                "produto": produto,
+                "fornecedor": fornecedor,
+                "movimentacao": mov_id,
+                "data_inicial": data_ini,
+                "data_final": data_fim
+            })
+
+            result = conn.execute(
+                text("FETCH ALL FROM cursor_mov")
             )
 
-        """), {
-
-            "produto": produto,
-            "fornecedor": fornecedor
-
-        })
-
-        result = conn.execute(
-            text(
-                "FETCH ALL FROM cursor_mov"
+            df = pd.DataFrame(
+                result.fetchall(),
+                columns=result.keys()
             )
-        )
 
-        df = pd.DataFrame(
-            result.fetchall(),
-            columns=result.keys()
-        )
+            trans.commit()
 
-        trans.commit()
+        except Exception as erro:
+
+            trans.rollback()
+            raise erro
 
     return df.to_dict(
         orient="records"
     )
-
 # =========================================================
 # START
 # =========================================================
