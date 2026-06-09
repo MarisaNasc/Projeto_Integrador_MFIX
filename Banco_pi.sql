@@ -138,3 +138,5 @@ FROM information_schema.columns
 WHERE table_name = 'fato_movimentacao'
 AND column_name = 'data';
 
+
+
